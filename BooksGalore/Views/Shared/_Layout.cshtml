@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BooksGalore</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/Bootstrap.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/bootstrap-icons-1.9.1/bootstrap-icons.css" asp-append-version="true" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" asp-append-version="true"/>
+
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/BooksGalore.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+       <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand text-info" href="#">BooksGalore</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarColor01">
+      <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link " asp-area="Customer" asp-controller="Home" asp-action="Index"><i class="bi-house"></i>&nbsp Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " asp-area="Admin" asp-controller="Book" asp-action="Index"><i class="bi-card-list"></i>&nbsp Categories</a>
+                        </li>
+                          <li class="nav-item">
+                            <a class="nav-link " asp-area="Admin" asp-controller="CoverType" asp-action="Index"><i class="bi-card-list"></i>&nbsp CoverType</a>
+                        </li>
+                    </ul>
+    </div>
+  </div>
+</nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+@*            <partial name="_toastr.cshtml" /> if we want to use script from local use @sectionscript and below method
+*@       
+@RenderSection("myown",required:false)
+@RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2022 - BooksGalore - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+
+
+
+
+

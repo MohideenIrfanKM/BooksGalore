@@ -21,4 +21,8 @@
     <ProjectReference Include="..\BooksGalore.Db\BooksGalore.Db.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Images\Products\" />
+  </ItemGroup>
+
 </Project>

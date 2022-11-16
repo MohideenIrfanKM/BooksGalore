@@ -28,6 +28,7 @@ namespace BooksGalore.Repository
                 obj.CoverTypeId = product.CoverTypeId;
                 obj.CategoryId = product.CategoryId;
                 obj.Id = product.Id;
+                if(product.ImageURL != null)    
                 obj.ImageURL = product.ImageURL;
                 //anotherway if we want to update particular fields only
 

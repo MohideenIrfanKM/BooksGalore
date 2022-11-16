@@ -8,6 +8,7 @@ namespace BooksGalore.Repository.IRepository
         
         ICategoryRepository CategoryRepository { get;  }
         ICoverTypeRepository CoverTypeRepository { get; }
+        IProductRepository ProductRepository { get; }
 
         public void Save();
     }

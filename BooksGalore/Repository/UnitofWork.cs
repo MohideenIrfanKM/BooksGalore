@@ -12,9 +12,13 @@ namespace BooksGalore.Repository
             this.db = db;
             CategoryRepository = new CategoryRepository(db);
             CoverTypeRepository = new CoverTypeRepository(db);
+            ProductRepository = new ProductRepository(db);
+
         }
         public ICategoryRepository CategoryRepository { get; private set; }
         public ICoverTypeRepository CoverTypeRepository { get; private set; }
+        public IProductRepository ProductRepository { get; private set; }
+
 
         public void Save()
         {

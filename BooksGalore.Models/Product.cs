@@ -26,7 +26,7 @@ namespace BooksGalore.Models
         public int CoverTypeId { get; set; }
         [ForeignKey("CoverTypeId")]
         [ValidateNever]
-        public CoverType covertype { get; set; }
+        public CoverType Covertype { get; set; }
         [Range(1,10000)]
         public double listprice { get; set; }
         [Range(1,10000)]

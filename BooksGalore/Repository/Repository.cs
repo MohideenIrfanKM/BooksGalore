@@ -19,16 +19,25 @@ namespace BooksGalore.Repository
             dbset.Add(entity);
         }
 
-        IEnumerable<T> IRepository<T>.GetAll()
+        IEnumerable<T> IRepository<T>.GetAll(string? includeProperties=null)
         {
             IQueryable<T> query = dbset;//////////////////WHY????? create Intrface obj
+            if(includeProperties!=null)
+                foreach(var property in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)){
+                    query=query.Include(property);
+                }
             return query.ToList();
         }
 
-        T IRepository<T>.getFirstorDefault(System.Linq.Expressions.Expression<Func<T, bool>> filter)
+        T IRepository<T>.getFirstorDefault(System.Linq.Expressions.Expression<Func<T, bool>> filter, string? includeProperties=null)
         {
             IQueryable<T> query = dbset;
             query = query.Where(filter);
+            if (includeProperties != null)
+                foreach (var property in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query=query.Include(property);
+                }
             return query.FirstOrDefault();
 
         }

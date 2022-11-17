@@ -88,6 +88,14 @@ namespace BooksGalore.Controllers
             return View(c);
 
         }
-    } 
+        #region API-CALLS
+        [HttpGet]
+        public IActionResult GetProducts()
+        {
+            var products = db.ProductRepository.GetAll("Category,Covertype");//GetAll("includeProperties:Category,Covertype")
+            return Json(new {data = products });
+        }
+        #endregion
+    }
 }
        

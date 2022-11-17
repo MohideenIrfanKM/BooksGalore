@@ -4,9 +4,9 @@ namespace BooksGalore.Repository.IRepository
 {
     public interface IRepository<T> where T:class
     {
-        IEnumerable<T> GetAll();
+        IEnumerable<T> GetAll(string? includeProperties=null);
         void Add(T entity); 
         void Remove(T entity);
-        T getFirstorDefault(Expression<Func<T, bool>> filter);
+        T getFirstorDefault(Expression<Func<T, bool>> filter,string? includeProperties=null);
     }
 }

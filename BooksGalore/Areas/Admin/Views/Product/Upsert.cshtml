@@ -2,9 +2,11 @@
 
 <div style="margin-bottom:3em;margin-top:3em " > <h3 class="text-info">@(Model.product.Id==0?"Create ":"Update ")Product</h3></div>
 <form method="post" enctype="multipart/form-data">
-	<div id="widofmaindiv" style="margin:10px;padding:80px;border-radius:13px;border:1px solid #5BC0DE" class="row">
 	<div asp-validation-summary="All"></div>
-
+	<input asp-for="@Model.product.Id" hidden></input>
+	<input asp-for="@Model.product.ImageURL" hidden />
+	<div class="row">
+	<div id="widofmaindiv" style="margin:10px;padding:20px;border-radius:13px;border:1px solid #5BC0DE" class="col-10 row" >
 	<div class="mt-3 col-12 ">
 	<label> Title</label>
 	<input class="form-control"  asp-for="product.Name" />
@@ -12,9 +14,11 @@
 
 	</div>
 
+
+
 	<div class="mt-3 col-12">
 	<label>Description</label>
-	<textarea class="form-control" rows="3" asp-for="product.Description"/></textarea>
+	<textarea class="form-control" rows="3" asp-for="product.Description"/>@Model.product.Description</textarea>
 	<span asp-validation-for=product.Description class="text-danger"></span>
 	</div>
 
@@ -56,7 +60,7 @@
 
 		<div class="mt-3 col-6">
 	<label>ImageURL</label>
-	<input id="img" name="file" type="file" class="form-control"  asp-for="product.ImageURL"/>
+	<input id="img" name="file" type="file" class="form-control" />
 	</div>
 
 
@@ -120,6 +124,13 @@
 		}
 	</div>
 
+	</div>
+	<div class="col-2" >
+		@if(Model.product.ImageURL!=null)
+		{
+		<img style="height:150px;width:260px;border-radius:13px;border:1px solid black;box-shadow:0px 20px 30px -10px #5BC0DE;" src="/@Model.product.ImageURL" />
+		}
+	</div>
 	</div>
 	
 </form>

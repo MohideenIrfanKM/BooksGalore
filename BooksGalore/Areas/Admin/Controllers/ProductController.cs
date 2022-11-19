@@ -28,36 +28,39 @@ namespace BooksGalore.Controllers
 
             return View();
         }
-
+        [HttpGet]
         public IActionResult Upsert(int? id)
         {
             ProductVM pdt = new ProductVM()
             {
                 product = new(),
                 categlist = db.CategoryRepository.GetAll().Select(
-               u => new SelectListItem //ORnew SelectlistItem(){}
-               {
-                 Text = u.Name, //when users select name ID will be retured as value
+            u => new SelectListItem //ORnew SelectlistItem(){}
+             {
+                Text = u.Name, //when users select name ID will be retured as value
                  Value = u.Id.ToString()
-               }),
-                coverlist= db.CoverTypeRepository.GetAll().Select(
-               u => new SelectListItem
-               {
-                 Text = u.Name, //when users select name ID will be retured as value
+            }),
+                coverlist = db.CoverTypeRepository.GetAll().Select(
+            u => new SelectListItem
+            {
+                Text = u.Name, //when users select name ID will be retured as value
                  Value = u.Id.ToString(),
-                }
-         )
+            }
+      )
 
-        };
-        //if target type known then use Product(target) pdt=new();
+            };
+
+            //if target type known then use Product(target) pdt=new();
             if (id == null || id == 0)
             {
                 //for create new
+               
 
             }
             else
             {
-                //for updating
+                pdt.product=db.ProductRepository.getFirstorDefault(u=>u.Id==id);    
+                
             }
            // ViewBag.Categlist = categlist;
            // ViewBag.Coverlist = coverlist;
@@ -70,21 +73,37 @@ namespace BooksGalore.Controllers
             if (ModelState.IsValid)
             {
                 string path = env.WebRootPath;
-                if (file != null) { 
-                string name = Guid.NewGuid().ToString();
-                var upl=Path.Combine(path, @"Images/Products");
-                var ext=Path.GetExtension(file.FileName);
-                using(var fstream=new FileStream(Path.Combine(upl,name+ext), FileMode.Create))
-                 {
+                if (file != null)
+                {
+                    if (c.product.ImageURL != null)
+                    {
+                        if (System.IO.File.Exists(Path.Combine(path, c.product.ImageURL)))
+                            System.IO.File.Delete(Path.Combine(path, c.product.ImageURL));//if to trim use c.product.ImageURL.trimStart("/");
+                    }
+                    string name = Guid.NewGuid().ToString();
+                    var upl = Path.Combine(path, @"Images/Products");
+                    var ext = Path.GetExtension(file.FileName);
+                    using (var fstream = new FileStream(Path.Combine(upl, name + ext), FileMode.Create))
+                    {
                         file.CopyTo(fstream);
-                 }
-                 c.product.ImageURL = @"Images/Products" + name + ext;
-                 db.ProductRepository.Add(c.product);
-                db.Save();
+                    }
+                    c.product.ImageURL = @"Images/Products/" + name + ext;
+                }
+                    if (c.product.Id==0)
+                    {
+                        db.ProductRepository.Add(c.product);
+
+                    }
+                    else
+                    {
+                        db.ProductRepository.Update(c.product);
+
+                    }
+                    db.Save();
                 TempData["success"] = "Product Updated Successfully";
 
                 return RedirectToAction("Index");
-            } }
+             }
             return View(c);
 
         }

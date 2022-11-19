@@ -37,6 +37,7 @@ namespace BooksGalore.Models
         public double price100 { get; set; }  
         [ValidateNever]
         public string ImageURL { get; set; }
+        
 
 
     }

@@ -28,6 +28,12 @@ namespace BooksGalore.Controllers
 
             return View();
         }
+        //ALTERNATIVE TO AJAX FOR DISPLAYING PRODUCT DATA
+        //public IActionResult temp(int? id)
+        //{
+        //    IEnumerable<Product> st = db.ProductRepository.GetAll("Category,Covertype");
+        //    return View(st);
+        //}
         [HttpGet]
         public IActionResult Upsert(int? id)
         {
@@ -66,6 +72,7 @@ namespace BooksGalore.Controllers
            // ViewBag.Coverlist = coverlist;
             return View(pdt);
         }
+        
         [HttpPost]
         public IActionResult Upsert(ProductVM c, IFormFile? file)
         {

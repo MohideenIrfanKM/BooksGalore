@@ -83,7 +83,7 @@ namespace BooksGalore.Controllers
                     string name = Guid.NewGuid().ToString();
                     var upl = Path.Combine(path, @"Images/Products");
                     var ext = Path.GetExtension(file.FileName);
-                    using (var fstream = new FileStream(Path.Combine(upl, name + ext), FileMode.Create))
+                    using (var fstream = new FileStream(Path.Combine(upl, name + ext), FileMode.Create))//this adds '/' inbetween
                     {
                         file.CopyTo(fstream);
                     }
@@ -92,15 +92,18 @@ namespace BooksGalore.Controllers
                     if (c.product.Id==0)
                     {
                         db.ProductRepository.Add(c.product);
+                    db.Save();
+                    TempData["success"] = "Product Added Successfully";
 
-                    }
+                }
                     else
                     {
                         db.ProductRepository.Update(c.product);
-
-                    }
                     db.Save();
-                TempData["success"] = "Product Updated Successfully";
+                    TempData["success"] = "Product Updated Successfully";
+
+                }
+   
 
                 return RedirectToAction("Index");
              }
@@ -113,8 +116,34 @@ namespace BooksGalore.Controllers
         {
             var products = db.ProductRepository.GetAll("Category,Covertype");//GetAll("includeProperties:Category,Covertype")
             return Json(new {data = products });
+
         }
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            var obj = db.ProductRepository.getFirstorDefault(u => u.Id == id);
+            if (obj == null)
+            {
+
+                return Json(new { success = false, msg = "Error While  deleting!!" });
+            }
+            else
+            {
+                string path = env.WebRootPath;
+
+                db.ProductRepository.Remove(obj);
+                if (System.IO.File.Exists(Path.Combine(path, obj.ImageURL)))
+                    System.IO.File.Delete(Path.Combine(path, obj.ImageURL));
+                db.Save();
+                return Json(new { success = true, msg = "Product Deleted Successfully!!" });
+            }
+        }
+
         #endregion
+
     }
 }
-       
+
+
+
+

@@ -1,8 +1,35 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@model IEnumerable<Product>
+<div class="row mt-4">
+    @foreach(var i in Model)
+    {
+        <div class="col-lg-3 col-sm-6 col-md-4" style="margin-bottom:50px" >
+            <div class="row p-2">
+                <div class="col-12 p-1" style="border:1px solid #5BC0DE;border-radius:5px;">
+                     <div class="card">
+                           <img style="padding:3px;margin:2px;border:1px solid black;" src="/@i.ImageURL" class="card-img-top rounded">
+                           
+<div class="pl-1 card-body">
+                     <div class="p-2">
+                    <h5 class=" card-title" >Title  :<b style="color:#5BC0DE" ><span style="text-transform:capitalize;"> @i.Name</span></b></h5>
+                    <h6 class=" card-title" >Author :<b style="color:#5BC0DE" ><span style="text-transform:uppercase;"> @i.Author</span></b></h6>
+                    <br>
+                    </div>
+                    <div class="p-2">
+                    <h6 class=" card-title" >List Price:<strike><b style="color:indianred;"> $@i.listprice.ToString("0.000")</b></strike></h6>
+                    <h6 class=" card-title" >As low as :<b style="color:#5BC0DE"> $@i.price.ToString("0.000")</b><small> only:-</small></h6>
+                    </div>
+                    <div>
+                        <a asp-action="Details" asp-route-id="@i.Id" class="btn btn-info form-control"> Add to Cart </a>
+                    </div>
+                    </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+     }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+

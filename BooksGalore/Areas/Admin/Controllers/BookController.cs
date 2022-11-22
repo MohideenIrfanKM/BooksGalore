@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BooksGalore.Controllers
 {
+    [Area("Admin")]
     public class BookController : Controller
     {
         private readonly IUnitofWork db;

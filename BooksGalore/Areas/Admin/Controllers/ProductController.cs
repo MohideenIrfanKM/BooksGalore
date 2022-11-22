@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BooksGalore.Controllers
 {
+    [Area("Admin")]
+
     public class ProductController : Controller
     {
         private readonly IUnitofWork db;

@@ -1,6 +1,7 @@
 using BooksGalore.Db;
 using BooksGalore.Repository;
 using BooksGalore.Repository.IRepository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<Dbcontext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("Connect")/*,b=>b.MigrationsAssembly("BooksGalore.Models")*/));
-
+builder.Services.AddDefaultIdentity<IdentityUser>(/*options => options.SignIn.RequireConfirmedAccount = true*/)
+    .AddEntityFrameworkStores<Dbcontext>();
 builder.Services.AddScoped<IUnitofWork, UnitofWork>();
 
 var app = builder.Build();
@@ -26,6 +28,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
+
 
 app.UseAuthorization();
 

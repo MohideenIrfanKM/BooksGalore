@@ -6,7 +6,7 @@ namespace BooksGalore.Repository
 {
     public class UnitofWork : IUnitofWork
     {
-        Dbcontext db;
+        BooksGalore.Db.Dbcontext db;
         public UnitofWork(Dbcontext db)
         {
             this.db = db;

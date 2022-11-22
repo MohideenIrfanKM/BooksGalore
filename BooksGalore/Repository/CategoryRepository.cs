@@ -8,6 +8,7 @@ namespace BooksGalore.Repository
     public class CategoryRepository : Repository<Category>, ICategoryRepository
 
     {
+
         private readonly Dbcontext db;
 
         public CategoryRepository(Dbcontext db):base(db)
@@ -17,6 +18,7 @@ namespace BooksGalore.Repository
         public void Update(Category category)
         {
             db.Categories.Update(category);
+            
 
         }
     }

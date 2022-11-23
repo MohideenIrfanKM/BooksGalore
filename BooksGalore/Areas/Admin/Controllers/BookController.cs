@@ -28,7 +28,7 @@ namespace BooksGalore.Controllers
             return View();
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]//To prevent cross site scripting!!!!
         public IActionResult Create(Category c)
         {
             int val;

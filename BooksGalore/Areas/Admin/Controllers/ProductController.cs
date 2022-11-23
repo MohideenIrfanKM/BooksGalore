@@ -19,6 +19,7 @@ namespace BooksGalore.Controllers
         {
             this.db = db;
             this.env = env;
+            //if we use db context then we can use db.dbsetname.Include("Covertype")
         }
         public IActionResult Index()
         {

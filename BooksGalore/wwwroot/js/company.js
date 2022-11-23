@@ -5,40 +5,41 @@ $(document).ready(function () {
 });
 
 function loaddata() { //below method complex just for ajax api calls
-    datatable=$('#myTable').DataTable({
+    datatable = $('#myTable3').DataTable({
         "ajax": {
-            "url": "/Admin/Product/GetProducts"
+            "url": "/Admin/Company/GetCompanies"
         },
         "columns": [
             { "data": "name" },
-            { "data": "isbn" },
-            { "data": "price" },
-            { "data": "author" },
-            { "data": "category.name" },
+            { "data": "streetAddress" },
+            { "data": "city" },
+            { "data": "state" },
+            { "data": "postalCode" },
+            { "data": "phoneNumber" },
+
             {
                 "data": "id",
                 "render": function (data) {
                     /*if its not rendering please enable js debugging under toold-options-debugging*/
                     return ` 
                             <div class="btn-group">
-                            <a  href="/Admin/Product/Upsert?id=${data}" class="btn btn-outline-info" >Edit</a>
-                            <a  onClick=Delete('/Admin/Product/Delete?id=${data}') class="btn btn-outline-danger" >Delete</a>
+                            <a  href="/Admin/Company/Upsert?id=${data}" class="btn btn-outline-info" >Edit</a>
+                            <a  onClick=Delete('/Admin/Company/Delete?id=${data}') class="btn btn-outline-danger" >Delete</a>
                             </div>
                             `
-            
+
                 },
-            
-                
-                }
+
+
+            }
 
         ]
     });
 }
-function Delete(url)
-{
+function Delete(url) {
     swal({
         title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this product details!!!!",
+        text: "Once deleted, you will not be able to recover this Company details!!!!",
         icon: "warning",
         buttons: true,
         dangerMode: true,

@@ -6,8 +6,9 @@ namespace BooksGalore.Db
 {
     public class Dbcontext :IdentityDbContext
 
-        //directly we can use include properties in case of dbcontext. But in Repository  it is not possible.
+        //directly we can use include properties like .Include("covertype") in case of dbcontext. But in Repository  it is not possible.
     {
+       //like db.dbsetname.Include("Covertype")
         public Dbcontext(DbContextOptions<Dbcontext> options):base(options)
         {
 
@@ -21,6 +22,8 @@ namespace BooksGalore.Db
     }
         public DbSet<Category> Categories { get; set; }
         public DbSet<CoverType> CoverTypes { get; set; }
-        public DbSet<Product> Products { get; set; }    
+        public DbSet<Product> Products { get; set; }  
+        public DbSet<Company> Companies { get; set; }   
+       public DbSet<ApplicationUser> ApplicationUsers {  get; set; }
     }
 }

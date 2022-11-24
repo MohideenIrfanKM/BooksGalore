@@ -95,7 +95,9 @@ namespace BooksGalore.Areas.Identity.Pages.Account.Manage
 
             if (!ModelState.IsValid)
             {
+
                 await LoadAsync(user);
+                //TempData["welcome"] = "Welcome";
                 return Page();
             }
 

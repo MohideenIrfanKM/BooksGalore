@@ -11,6 +11,8 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using BooksGalore.Models;
+using BooksGalore.Repository;
+using BooksGalore.Repository.IRepository;
 using BooksGalore.Utility;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -34,13 +36,14 @@ namespace BooksGalore.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
+        public readonly IUnitofWork _db;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender,RoleManager<IdentityRole> roleManager)
+            IEmailSender emailSender,RoleManager<IdentityRole> roleManager,IUnitofWork db)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -49,6 +52,7 @@ namespace BooksGalore.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            _db = db;
         }
 
         /// <summary>
@@ -133,8 +137,13 @@ namespace BooksGalore.Areas.Identity.Pages.Account
             
             public string? Role { get; set; }
 
+
+            public int? CompanyId { get; set; }
+
             [Display(Name = " Select Role")]
             public IEnumerable<SelectListItem>? Roleslist { get; set; }
+            public IEnumerable<SelectListItem>? Companylist { get; set; }
+            
 		}
 
 
@@ -159,6 +168,11 @@ namespace BooksGalore.Areas.Identity.Pages.Account
                 {
                     Text = i,
                     Value = i,
+                }),
+                Companylist=_db.CompanyRepository.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString(),//value here is string property
                 })
 
             };
@@ -181,13 +195,19 @@ namespace BooksGalore.Areas.Identity.Pages.Account
                 user.City=Input.City;
                 user.Name=Input.Name;
                 user.StreetAddress=Input.StreetAddress; 
-                user.PostalCode=Input.PostalCode;   
+                user.PostalCode=Input.PostalCode;
+                if (Input.Role == Util._com)
+                {
+                    user.CompanyId = Input.CompanyId;
+                }
                 //we are doing manually above because it is defaulty add useremail and password only so we
                 //manually adding it using user object
 
                 if (result.Succeeded)
                 {
+                    
                     _logger.LogInformation("User created a new account with password.");
+          
                     if (Input.Role != null)
                     {
                         await _userManager.AddToRoleAsync(user, Input.Role);
@@ -232,7 +252,7 @@ namespace BooksGalore.Areas.Identity.Pages.Account
                     Value = i,
                 })
 
-            };
+            };//we added it again because there is some error when form validation unsuccessfull asp-items became null so that only
             // If we got this far, something failed, redisplay form
             return Page();
         }

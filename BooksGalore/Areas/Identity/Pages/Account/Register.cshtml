@@ -77,9 +77,19 @@
                 <label style="color:black">Role</label>
             </div>
 
+            <div class="col-12" style="margin-bottom:10px;"></div>
+
+            <div class="form-floating col-6"   >
+
+                <select asp-items=@Model.Input.Companylist style="display:none;" asp-for="Input.CompanyId" class="form-select">
+                    <option selected disabled>--SELECT Company--</option>
+                </select>
+                <label style="color:black">Company</label>
+            </div>
+
             <div class="col-12" style="margin-bottom:14px;"></div>
             <div class="form-floating col-2 ">
-            <button id="registerSubmit"  type="submit" class=" btn  btn-success ">Register</button>
+            <button id="registerSubmit"  type="submit" onclick="fun()" class=" btn  btn-success ">Register</button>
             </div>
         </form>
     </div>
@@ -104,7 +114,7 @@
                             <p>
                                 @foreach (var provider in Model.ExternalLogins)
                                 {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                    <button type="submit" class="btn btn-primary"  name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
                                 }
                             </p>
                         </div>
@@ -117,4 +127,32 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+@*    or try onselect using normal htmlcss js to toggle CompanyId instead of using ajax
+*@    <script>
+        $(document).ready(function(){
+            $('#Input_Role').change(function(){
+                var selection=$('#Input_Role Option:Selected').text();
+                if(selection!="Company")
+                    $('#Input_CompanyId').hide();
+                else
+                    $('#Input_CompanyId').show();
+
+
+            })
+        });
+        function fun() {
+                  console.log("executing");
+                  if (document.getElementById("Input_Role").value == "Company") {
+                      if (document.getElementById("Input_CompanyId").value == "--SELECT Company--") {
+
+                      
+                      swal("Request Failed!!", "Company can't be blank if Role Selected is COMPANY", "error"); //heading, message, key{success,error}
+                      return false;
+
+                  }}
+                  else {
+                      return true;
+                  }
+              }
+    </script>
 }

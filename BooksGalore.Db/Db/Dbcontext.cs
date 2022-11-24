@@ -24,6 +24,13 @@ namespace BooksGalore.Db
         public DbSet<CoverType> CoverTypes { get; set; }
         public DbSet<Product> Products { get; set; }  
         public DbSet<Company> Companies { get; set; }   
-       public DbSet<ApplicationUser> ApplicationUsers {  get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers {  get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        //include dbset properties for proper migration if dbcontext seperated from main project
     }
 }
+ //codegenration for scaffolding
+ //efcore.tools for migration
+ //efcore for accessing Dbcontext
+ //sqlserver for accessing sqlserver
+ //Identity for accessing Registration $ Login

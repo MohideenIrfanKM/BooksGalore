@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BooksGalore.Db\BooksGalore.Db.csproj" />
+    <ProjectReference Include="..\BooksGalore.Utility\BooksGalore.Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>

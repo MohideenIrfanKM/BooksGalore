@@ -35,7 +35,7 @@ namespace BooksGalore.Models
         public double price50 { get; set; }
         [Range(1,10000)]
         public double price100 { get; set; }  
-        [ValidateNever]
+        [ValidateNever] //omit this field in validation Script
         public string ImageURL { get; set; }
         
 

@@ -10,14 +10,18 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using BooksGalore.Models;
+using BooksGalore.Utility;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+
 
 namespace BooksGalore.Areas.Identity.Pages.Account
 {
@@ -29,13 +33,14 @@ namespace BooksGalore.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -43,6 +48,7 @@ namespace BooksGalore.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -93,17 +99,69 @@ namespace BooksGalore.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
+
+
+            [Required]
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; }
-        }
+			[Display(Name = "Confirm password")]
+			[Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+			public string ConfirmPassword { get; set; }
+
+			[Required]
+			[Display(Name = "Name")]
+			public string Name { get; set; }
+
+			
+			
+			[Display(Name = "Street Address")]
+			public string ?StreetAddress { get; set; }
+
+			[Display(Name = "City")]
+			public string ?City { get; set; }
+
+			[Display(Name = "State")]
+			public string ?State { get; set; }
+
+			
+			[Display(Name = "Postal Code")]
+			public string ?PostalCode { get; set; }
+
+            [Phone]
+			[Display(Name = "Phone ")]
+			public string ?PhoneNumber { get; set; }
+
+            
+            public string? Role { get; set; }
+
+            [Display(Name = " Select Role")]
+            public IEnumerable<SelectListItem>? Roleslist { get; set; }
+		}
 
 
         public async Task OnGetAsync(string returnUrl = null)
+
         {
-            ReturnUrl = returnUrl;
+            if (!_roleManager.RoleExistsAsync(Util._Emp).GetAwaiter().GetResult()) 
+            { 
+                _roleManager.CreateAsync(new IdentityRole(Util._ind)).GetAwaiter().GetResult();
+				_roleManager.CreateAsync(new IdentityRole(Util._Emp)).GetAwaiter().GetResult();
+				_roleManager.CreateAsync(new IdentityRole(Util._com)).GetAwaiter().GetResult();
+				_roleManager.CreateAsync(new IdentityRole(Util._Adm)).GetAwaiter().GetResult();
+
+			}
+			ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            //input is the object of this InputModel which van be found above
+            Input = new InputModel()
+            {
+                //we are populating the rolelist here to pass it to the views
+                Roleslist = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
+                {
+                    Text = i,
+                    Value = i,
+                })
+
+            };
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)//if any problem add ? in string
@@ -116,12 +174,28 @@ namespace BooksGalore.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
+                user.State=Input.State;
+                user.PhoneNumber=Input.PhoneNumber;
+                user.City=Input.City;
+                user.Name=Input.Name;
+                user.StreetAddress=Input.StreetAddress; 
+                user.PostalCode=Input.PostalCode;   
+                //we are doing manually above because it is defaulty add useremail and password only so we
+                //manually adding it using user object
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-
+                    if (Input.Role != null)
+                    {
+                        await _userManager.AddToRoleAsync(user, Input.Role);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, Util._ind);
+                    }//AddtoRoleS is for assigning multiple roles.
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -149,16 +223,25 @@ namespace BooksGalore.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
+            Input = new InputModel()
+            {
+                //we are populating the rolelist here to pass it to the views
+                Roleslist = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
+                {
+                    Text = i,
+                    Value = i,
+                })
 
+            };
             // If we got this far, something failed, redisplay form
             return Page();
         }
 
-        private IdentityUser CreateUser()
+        private ApplicationUser CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<IdentityUser>();
+                return Activator.CreateInstance<ApplicationUser>();
             }
             catch
             {

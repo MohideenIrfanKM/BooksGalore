@@ -1,17 +1,21 @@
 using BooksGalore.Db;
 using BooksGalore.Repository;
 using BooksGalore.Repository.IRepository;
+using BooksGalore.Utility;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<Dbcontext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("Connect")/*,b=>b.MigrationsAssembly("BooksGalore.Models")*/));
-builder.Services.AddDefaultIdentity<IdentityUser>(/*options => options.SignIn.RequireConfirmedAccount = true*/)
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(/*options => options.SignIn.RequireConfirmedAccount = true*/).AddDefaultTokenProviders()
     .AddEntityFrameworkStores<Dbcontext>();
+builder.Services.AddSingleton<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IUnitofWork, UnitofWork>();
 
 var app = builder.Build();

@@ -10,6 +10,8 @@
         <div class="card  container">
             <div class="card-header bg-primary text-light ml-0  row ">
                 <div class=" col-md-6">
+                    <input asp-for="ProductId" hidden />
+                    <input asp-for="Id" hidden />
                     <h1 class="text-success">@Model.product.Name</h1>
                     <p class="text-warning">by @Model.product.Author</p>
                 </div>

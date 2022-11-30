@@ -17,6 +17,13 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(/*options => options.Si
     .AddEntityFrameworkStores<Dbcontext>();
 builder.Services.AddSingleton<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IUnitofWork, UnitofWork>();
+builder.Services.ConfigureApplicationCookie(option =>
+{
+    option.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+    option.LoginPath = $"/Identity/Account/Login";
+    option.LogoutPath = $"/Identity/Account/Logout";
+
+});
 
 var app = builder.Build();
 

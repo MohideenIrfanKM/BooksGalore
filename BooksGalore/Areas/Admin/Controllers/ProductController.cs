@@ -83,7 +83,7 @@ namespace BooksGalore.Controllers
             if (ModelState.IsValid)
             {
                 string path = env.WebRootPath;
-                if (file != null)
+                if (file != null)//only a new file added
                 {
                     if (c.product.ImageURL != null)
                     {

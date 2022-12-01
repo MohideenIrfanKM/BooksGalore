@@ -42,7 +42,7 @@ namespace BooksGalore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("BooksGalore.Models.Company", b =>
@@ -74,7 +74,7 @@ namespace BooksGalore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Companies", (string)null);
                 });
 
             modelBuilder.Entity("BooksGalore.Models.CoverType", b =>
@@ -92,7 +92,7 @@ namespace BooksGalore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CoverTypes");
+                    b.ToTable("CoverTypes", (string)null);
                 });
 
             modelBuilder.Entity("BooksGalore.Models.Product", b =>
@@ -147,7 +147,7 @@ namespace BooksGalore.Migrations
 
                     b.HasIndex("CoverTypeId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("BooksGalore.Models.ShoppingCart", b =>
@@ -174,7 +174,7 @@ namespace BooksGalore.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ShoppingCarts");
+                    b.ToTable("ShoppingCarts", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

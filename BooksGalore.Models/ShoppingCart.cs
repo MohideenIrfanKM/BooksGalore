@@ -24,7 +24,12 @@ namespace BooksGalore.Models
         [ValidateNever]
         [ForeignKey("ApplicationUserId")]
         public ApplicationUser ApplicationUser { get; set; } //press appuser f12 to see the implement of class
-        [Range(1,1000,ErrorMessage ="Count value should be within 1 - 1000 ")]
-        public int count { get; set; }
+        [Required]
+        //[Range(1,1000,ErrorMessage ="Count value should be within 1 - 1000 ")]
+		[Range(1, 10000, ErrorMessage = "choose between 1-100")]
+		public int count { get; set; }
+        [NotMapped]
+        [ValidateNever]
+        public double price { get; set; }
     }
 }

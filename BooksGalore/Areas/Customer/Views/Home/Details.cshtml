@@ -64,7 +64,8 @@
                             </div>
                             <div class="row pl-2">
                                 <div class="col-3 text-primary"><h4 style="color:#5BC0DE;white-space:nowrap;" >Count</h4></div>
-                                <div class="col-9"><input width="2em" class="form-control"  /></div>
+                                <div class="col-9"><input asp-for="count" width="2em" class="form-control"  /></div>
+                                <span asp-validation-for="count"></span>
                             </div>
                         </div>
                         <div class="col-12 col-lg-3 offset-lg-1 text-center">
@@ -86,3 +87,8 @@
         </div>
 </form>
 </div>
+
+@section scripts
+{
+	<partial name="_ValidationScriptsPartial.cshtml" />
+}

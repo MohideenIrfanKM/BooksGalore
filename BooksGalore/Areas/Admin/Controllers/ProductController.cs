@@ -124,7 +124,7 @@ namespace BooksGalore.Controllers
         [HttpGet]
         public IActionResult GetProducts()
         {
-            var products = db.ProductRepository.GetAll("Category,Covertype");//GetAll("includeProperties:Category,Covertype")
+            var products = db.ProductRepository.GetAll(includeProperties:"Category,Covertype");//GetAll("includeProperties:Category,Covertype")
             return Json(new {data = products });
 
         }

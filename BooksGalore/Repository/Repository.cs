@@ -19,9 +19,12 @@ namespace BooksGalore.Repository
             dbset.Add(entity);
         }
 
-        IEnumerable<T> IRepository<T>.GetAll(string? includeProperties=null)
+        IEnumerable<T> IRepository<T>.GetAll(System.Linq.Expressions.Expression<Func<T,bool>>? filter=null, string? includeProperties=null)
         {
-            IQueryable<T> query = dbset;//////////////////WHY????? create Intrface obj
+            IQueryable<T> query = dbset;
+             //////////////////WHY????? create Intrface obj
+             if(filter!=null)
+              query = query.Where(filter);
             if(includeProperties!=null)
                 foreach(var property in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)){
                     query=query.Include(property);

@@ -27,7 +27,7 @@ namespace BooksGalore.Controllers
         {
 
             
-           IEnumerable<Product> products=db.ProductRepository.GetAll("Category,Covertype");
+           IEnumerable<Product> products=db.ProductRepository.GetAll(includeProperties:"Category,Covertype");
             return View(products);
          }
         public IActionResult Details(int pdtid)
@@ -36,7 +36,7 @@ namespace BooksGalore.Controllers
             ShoppingCart obj = new()
             {
                 product=pdt,
-                ProductId= pdtid,
+                ProductId= pdtid, //its(.net) confusing between ProductId and Id of shopping cart so that we differentiate using pdtid
                 count=1
             };
             return View(obj);

@@ -31,5 +31,7 @@ namespace BooksGalore.Models
         [NotMapped]
         [ValidateNever]
         public double price { get; set; }
-    }
+
+
+	}
 }

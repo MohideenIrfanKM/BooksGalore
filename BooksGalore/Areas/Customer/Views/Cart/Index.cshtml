@@ -27,29 +27,31 @@
 					{
 
 					<div class="d-none d-lg-block col-lg-1 text-center py-2">
-						<img src="@i.product.ImageURL" class="rounded" width="100%" />
+						<img src="/@i.product.ImageURL" class="rounded" width="100%" />
 					</div>
 					<div class="col-12 col-lg-6 pt-md-3">
 						<h5><strong>@i.product.Name</strong></h5>
-						<p><small>@i.product.Description</small></p>
+						<p><small>@Html.Raw(@i.product.Description)</small></p>
 					</div>
 					<div class="col-12  col-lg-5 text-center row">
 						<div class="col-4 text-md-right pt-4">
-							<h6><strong>$@i.price<span class="text-muted">*</span>@i.count </strong></h6>
+							<h6><strong>$@i.price.ToString("0.00")<span class="text-muted">*</span>@i.count (Nos) </strong></h6>
 						</div>
 						<div class="col-6 col-sm-4 col-lg-6 pt-2">
+@*							//< inside form it will not navigate to any other page until form is submitted but it will do the actions behind"
+*@
 							<div class="w-75 btn-group" role="group">
-								<a class="btn btn-primary">
+								<a asp-action="IncCount" asp-route-scid="@i.Id" class="btn btn-success">
 									<i class="bi bi-plus-square"></i>
 								</a> &nbsp;
-								<a class="btn btn-warning">
+									<a asp-action="DecCount" asp-route-scid="@i.Id" class="btn btn-warning">
 									<i class="bi bi-dash-square"></i>
 								</a>
 							</div>
 
 						</div>
 						<div class="col-2 col-sm-4 col-lg-2 text-right pt-2">
-							<a class="btn btn-danger">
+								<a asp-action="Remove" asp-route-scid="@i.Id" class="btn btn-danger">
 								<i class="bi bi-trash-fill"></i>
 							</a>
 						</div>
@@ -64,7 +66,7 @@
 						<ul class="list-group">
 							<li class="list-group-item d-flex justify-content-between bg-light">
 								<span class="text-info"> Total (USD)</span>
-								<strong class="text-info">$$$</strong>
+								<strong class="text-info">$@Model.total.ToString("0.00")</strong>
 							</li>
 						</ul>
 					</div>

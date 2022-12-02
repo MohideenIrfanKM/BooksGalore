@@ -23,6 +23,13 @@
 
 			<div class="card-body">
 				<div class="row">
+					@if (Model.scart.Count == 0)
+					{
+						<div class="col-12 col-lg-6 pt-md-3">
+							<h5><strong>Empty</strong></h5>
+							<p><small>No items to show here. Add items First!</small></p>
+						</div>
+					}
 					@foreach(var i in Model.scart)
 					{
 
@@ -58,7 +65,7 @@
 					</div>
 
 					}
-				</div>
+				</		>
 				<hr />
 
 				<div class="row">
@@ -76,9 +83,17 @@
 
 			<div class="card-footer">
 				<div class="card-footer row">
-					<div class="col-sm-12 col-lg-4 col-md-6 offset-lg-8 offset-md-6 ">
-						<a asp-action="Summary" class="btn btn-success form-control">Summary</a>
+						@if (Model.scart.Count == 0)
+						{
+							<div class="col-sm-12 col-lg-4 col-md-6 offset-lg-8 offset-md-6 ">
+								<button  class="btn btn-success form-control"  disabled>Summary</button>
+							</div> @*disabled not working in links*@
+						}
+						else{
+						<div class="col-sm-12 col-lg-4 col-md-6 offset-lg-8 offset-md-6 ">
+						<a asp-action="Summary" class="btn btn-success form-control" >Summary</a>
 					</div>
+						}
 				</div>
 			</div>
 		</div>

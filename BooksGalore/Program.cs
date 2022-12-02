@@ -5,6 +5,7 @@ using BooksGalore.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(/*options => options.Si
     .AddEntityFrameworkStores<Dbcontext>();
 builder.Services.AddSingleton<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IUnitofWork, UnitofWork>();
+builder.Services.Configure<BooksGalore.Utility.Stripe>(builder.Configuration.GetSection("Stripe"));
 builder.Services.ConfigureApplicationCookie(option =>
 {
     option.AccessDeniedPath = $"/Identity/Account/AccessDenied";
@@ -39,7 +41,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();//for this we have to use get not tostring
 app.UseAuthentication();
 
 

@@ -31,5 +31,16 @@ namespace BooksGalore.Repository
 				//db.SaveChanges();
 			}
 		}
+
+		public void UpdateStripePaymentId(int id, string SessionId, string PaymentId)
+		{
+		   OrderHeader orderHeader = db.OrderHeaders.FirstOrDefault(u=>u.Id == id);
+			if(orderHeader != null)
+			{
+				orderHeader.SessionId=SessionId;
+				orderHeader.PaymentId=PaymentId;
+				
+			}
+		}
 	}
 }

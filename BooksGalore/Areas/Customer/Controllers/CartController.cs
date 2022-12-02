@@ -2,12 +2,15 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Schema;
 using BooksGalore.Models;
+using BooksGalore.Repository;
 using BooksGalore.Repository.IRepository;
 using BooksGalore.Utility;
 using BooksGalore.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Stripe.Checkout;
 
 namespace BooksGalore.Areas.Customer.Controllers
 {
@@ -89,6 +92,7 @@ namespace BooksGalore.Areas.Customer.Controllers
 			}
 			db.OrderHeaderRepository.Add(obj.orderHeader);
 			db.Save();
+
 			foreach (var cart in obj.scart)
 			{
 				OrderDetails order = new OrderDetails()
@@ -102,10 +106,68 @@ namespace BooksGalore.Areas.Customer.Controllers
 				db.OrderDetailsRepository.Add(order);
 				db.Save();
 			}
-			//after order is created we can delete the shopping cart
-			db.ShoppingCartRepository.RemoveRange(obj.scart);
+			//adding stripe settings
+			var domain = "https://localhost:7028/";
+			var options = new SessionCreateOptions
+			{
+				LineItems = new List<SessionLineItemOptions>(),
+				Mode = "payment",
+				SuccessUrl = domain + $"Customer/Cart/OrderConfirmation?id={obj.orderHeader.Id}",
+				CancelUrl = domain + $"Customer/Cart/Index",
+			};
+			foreach (var item in obj.scart)
+			{
+				var data = new SessionLineItemOptions
+				{
+					// Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+					//Price = item.price.ToString(), only can add price or price data
+					Quantity = item.count,
+					PriceData=new SessionLineItemPriceDataOptions()
+					{
+						UnitAmount=(long)(item.price*100),//don't know why??? DOUBT----solved as it defaulty coverts integer to double(as we already have double point will move btwo step back) convers
+						Currency="usd",
+						ProductData=new SessionLineItemPriceDataProductDataOptions()
+						{
+							Name=item.product.Name,
+						}
+					}
+			
+			
+				};
+				options.LineItems.Add(data);
+			}
+			//session will be created here which was injected in the get view
+			var service = new SessionService();
+			Session session = service.Create(options);
+			//after Session Creation We have to update the session id and payment Id in the Model..in order to confirm order
+			db.OrderHeaderRepository.UpdateStripePaymentId(obj.orderHeader.Id, session.Id, session.PaymentIntentId);
 			db.Save();
-			return RedirectToAction("Index","Home");
+
+			Response.Headers.Add("Location", session.Url);
+			return new StatusCodeResult(303);
+			//after order is created we can delete the shopping cart
+			//db.ShoppingCartRepository.RemoveRange(obj.scart);
+			//db.Save();
+			//return RedirectToAction("Index","Home");
+		}
+		//we are using orderconfirmation in order to confirm that the payment is done before approving
+		public IActionResult OrderConfirmation(int id)
+		{
+			OrderHeader orderHeader = db.OrderHeaderRepository.getFirstorDefault(u => u.Id == id);
+			var service = new SessionService();
+			Session session = service.Get(orderHeader.SessionId);
+			if(session.PaymentStatus.ToLower()=="paid")
+			{
+				db.OrderHeaderRepository.UpdateStatus(id, Util.StatusApproved, Util.PaymentStatusApproved);
+				db.Save();
+			}
+			List<ShoppingCart> shoppingCarts = db.ShoppingCartRepository.GetAll(u=>u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+			if (shoppingCarts.Count > 0)
+			{
+				db.ShoppingCartRepository.RemoveRange(shoppingCarts);
+				db.Save();
+			}
+			return View(id);
 		}
 		public IActionResult DecCount(int scid)
 		{

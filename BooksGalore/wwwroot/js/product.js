@@ -34,16 +34,15 @@ function loaddata() { //below method complex just for ajax api calls
         ]
     });
 }
-function Delete(url)
-{
+function Delete(url) {
     swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover this product details!!!!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
-    })
-        .then((willDelete) => {
+    }).then((willDelete) => {
+        if (willDelete) {
             $.ajax({
                 url: url,
                 type: 'DELETE',
@@ -56,9 +55,16 @@ function Delete(url)
                     else
                         toastr.error(data.msg);
 
+
                 }
-            })
-        });
+            });
+        }
+        else {
+            swal("File Not Deleted!");
+
+        }
+     });
+
 }
 
 

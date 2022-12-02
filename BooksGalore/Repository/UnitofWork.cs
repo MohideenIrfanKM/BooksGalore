@@ -16,6 +16,8 @@ namespace BooksGalore.Repository
             CompanyRepository = new CompanyRepository(db);
             ApplicationUserRepository = new ApplicationUserRepository(db);
             ShoppingCartRepository = new ShoppingCartRepository(db);
+            OrderHeaderRepository = new OrderHeaderRepository(db);
+            OrderDetailsRepository = new OrderDetailsRepository(db);
 
         }
         public ICategoryRepository CategoryRepository { get; private set; }
@@ -24,6 +26,8 @@ namespace BooksGalore.Repository
         public ICompanyRepository CompanyRepository { get; private set; }
         public IApplicationUserRepository ApplicationUserRepository { get; set; }
         public IShoppingCartRepository ShoppingCartRepository { get; set; }
+        public IOrderHeaderRepository OrderHeaderRepository { get; set; }
+        public IOrderDetailsRepository OrderDetailsRepository { get; set; }
 
 
         public void Save()

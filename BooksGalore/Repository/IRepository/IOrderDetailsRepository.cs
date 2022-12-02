@@ -1,6 +1,9 @@
-﻿namespace BooksGalore.Repository.IRepository
+﻿using BooksGalore.Models;
+
+namespace BooksGalore.Repository.IRepository
 {
-	public interface IOrderDetails
+	public interface IOrderDetailsRepository : IRepository<OrderDetails>
 	{
+		public void Update(OrderDetails orderDetails);
 	}
 }

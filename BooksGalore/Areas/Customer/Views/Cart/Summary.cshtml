@@ -3,6 +3,7 @@
 *@
 @{
 }
+@model BooksGalore.ViewModel.ShoppingCartVM;
 <form method="post">
 	<br />
 	<div class="container">
@@ -14,7 +15,7 @@
 						Order Summary
 					</div>
 					<div class="col-6 text-end">
-						<a class="btn btn-outline-info btn-sm">Back to Cart</a>
+						<a  asp-action="Index" class="btn btn-outline-info btn-sm">Back to Cart</a>
 					</div>
 				</div>
 			</div>
@@ -32,7 +33,7 @@
 									<label>Name</label>
 								</div>
 								<div class="col-9">
-									<input class="form-control" />
+									<input asp-for="orderHeader.Name" class="form-control" />
 								</div>
 							</div>
 							<div class="row my-1">
@@ -40,7 +41,7 @@
 									<label>Phone</label>
 								</div>
 								<div class="col-9">
-									<input class="form-control" />
+									<input asp-for="orderHeader.PhoneNumber" class="form-control" />
 								</div>
 							</div>
 							<div class="row my-1">
@@ -48,7 +49,7 @@
 									<label>Street Address</label>
 								</div>
 								<div class="col-9">
-									<input class="form-control" />
+									<input asp-for="orderHeader.StreetAddress" class="form-control" />
 								</div>
 							</div>
 							<div class="row my-1">
@@ -56,7 +57,7 @@
 									<label>City</label>
 								</div>
 								<div class="col-9">
-									<input class="form-control" />
+									<input asp-for="orderHeader.City" class="form-control" />
 								</div>
 							</div>
 							<div class="row my-1">
@@ -64,7 +65,7 @@
 									<label>State</label>
 								</div>
 								<div class="col-9">
-									<input class="form-control" />
+									<input asp-for="orderHeader.State" class="form-control" />
 								</div>
 							</div>
 							<div class="row my-1">
@@ -72,7 +73,7 @@
 									<label>Postal Code</label>
 								</div>
 								<div class="col-9">
-									<input class="form-control" />
+									<input asp-for="orderHeader.PostalCode" class="form-control" />
 								</div>
 							</div>
 						</div>
@@ -81,19 +82,21 @@
 								<span class="text-info">Order Summary:</span>
 							</h4>
 							<ul class="list-group mb-3">
-
+								@foreach(var i in Model.scart)
+								{
 								<li class="list-group-item d-flex justify-content-between">
 									<div>
-										<h6 class="my-0">Title</h6>
-										<small class="text-muted">Quantity: Count</small>
+										<h6 class="my-0">@i.product.Name</h6>
+										<small class="text-muted">Quantity: @i.count</small>
 									</div>
-									<span class="text-muted">$$$ </span>
+									<span class="text-muted">$@((i.price * i.count).ToString("0.00")) </span>
 								</li>
-
+								}
 								<li class="list-group-item d-flex justify-content-between bg-light">
 									<small class="text-info">Total (USD)</small>
-									<strong class="text-info">$$$</strong>
+									<strong class="text-info">$@Model.orderHeader.OrderTotal.ToString("0.00")</strong>
 								</li>
+								
 							</ul>
 						</div>
 					</div>
@@ -102,10 +105,10 @@
 			<div class="card-footer">
 				<div class="row">
 					<div class="col-12 col-md-8 pt-2">
-						<p style="color:maroon; font-size:14px;">Estimate Arrival Date: </p>
+						<p style="color:maroon; font-size:14px;">Estimate Arrival Date: @DateTime.Now.AddDays(7).ToShortDateString() - @DateTime.Now.AddDays(14).ToShortDateString()</p>
 					</div>
 					<div class="col-12 col-md-4">
-						<button type="submit" value="Place Order" class="btn btn-primary form-control">Place Order</button>
+						<button  type="submit" value="Place Order" class="btn btn-primary form-control">Place Order</a>
 					</div>
 				</div>
 			</div>

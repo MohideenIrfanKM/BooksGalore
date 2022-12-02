@@ -7,6 +7,8 @@ namespace BooksGalore.Repository.IRepository
         IEnumerable<T> GetAll(System.Linq.Expressions.Expression<Func<T,bool>>? filter=null, string? includeProperties=null);
         void Add(T entity); 
         void Remove(T entity);
-        T getFirstorDefault(Expression<Func<T, bool>> filter,string? includeProperties=null);
+		void RemoveRange(IEnumerable<T> entity);
+
+		T getFirstorDefault(Expression<Func<T, bool>> filter,string? includeProperties=null);
     }
 }

@@ -3,6 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Xml.Schema;
 using BooksGalore.Models;
 using BooksGalore.Repository.IRepository;
+using BooksGalore.Utility;
 using BooksGalore.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,80 @@ namespace BooksGalore.Areas.Customer.Controllers
 		}
 		public IActionResult Summary()
 		{
-			return View();
+			var x = (ClaimsIdentity)User.Identity;
+			var claim = x.FindFirst(ClaimTypes.NameIdentifier);
+
+
+			ShoppingCartVM obj = new()
+			{
+				scart = db.ShoppingCartRepository.GetAll(u => u.ApplicationUserId == claim.Value, includeProperties: "product").ToList(),
+				orderHeader = new(),
+
+			};
+			obj.orderHeader.ApplicationUser = db.ApplicationUserRepository.getFirstorDefault(u => u.Id == claim.Value);
+			ApplicationUser usr = obj.orderHeader.ApplicationUser;
+			//obj.orderHeader.OrderDate = DateTime.Now;
+			obj.orderHeader.Name = usr.Name;
+			obj.orderHeader.PhoneNumber = usr.PhoneNumber;
+			obj.orderHeader.StreetAddress = usr.StreetAddress;
+			obj.orderHeader.City = usr.City;
+			obj.orderHeader.State = usr.State;
+			obj.orderHeader.PostalCode = usr.PostalCode;
+			
+		
+			//in foreach the  changable datatypes as objects can be changed"
+			foreach (var cart in obj.scart)
+			{
+
+				cart.price = pricecalc(cart.count, cart.product.price, cart.product.price50, cart.product.price100);
+				obj.orderHeader.OrderTotal += (cart.price * cart.count);
+			}
+			return View(obj);
+		}
+		[HttpPost]
+		[ActionName("Summary")]
+		[ValidateAntiForgeryToken]
+		public IActionResult SummaryPost(ShoppingCartVM obj)
+		{
+			var x = (ClaimsIdentity)User.Identity;
+			var claim = x.FindFirst(ClaimTypes.NameIdentifier);
+
+
+
+			obj.scart = db.ShoppingCartRepository.GetAll(u => u.ApplicationUserId == claim.Value, includeProperties: "product").ToList();
+
+			obj.orderHeader.OrderDate = DateTime.Now;
+			obj.orderHeader.PaymentStatus = Util.PaymentStatusPending;
+			obj.orderHeader.OrderStatus = Util.StatusPending;
+			obj.orderHeader.ApplicationUserId = claim.Value;
+
+
+			//in foreach the  changable datatypes as objects can be changed"
+			foreach (var cart in obj.scart)
+			{
+
+				cart.price = pricecalc(cart.count, cart.product.price, cart.product.price50, cart.product.price100);
+				obj.orderHeader.OrderTotal += (cart.price * cart.count);
+			}
+			db.OrderHeaderRepository.Add(obj.orderHeader);
+			db.Save();
+			foreach (var cart in obj.scart)
+			{
+				OrderDetails order = new OrderDetails()
+				{
+					ProductId = cart.ProductId,
+					Count = cart.count,
+					OrderId = obj.orderHeader.Id,
+					Price=obj.orderHeader.OrderTotal
+
+				};
+				db.OrderDetailsRepository.Add(order);
+				db.Save();
+			}
+			//after order is created we can delete the shopping cart
+			db.ShoppingCartRepository.RemoveRange(obj.scart);
+			db.Save();
+			return RedirectToAction("Index","Home");
 		}
 		public IActionResult DecCount(int scid)
 		{
@@ -65,6 +139,7 @@ namespace BooksGalore.Areas.Customer.Controllers
 			ShoppingCartVM obj = new()
 			{
 				scart = db.ShoppingCartRepository.GetAll(u=>u.ApplicationUserId==claim.Value,includeProperties:"product").ToList(),
+				orderHeader=new(),
 			
 			};
 			//in foreach the  changable datatypes as objects can be changed"
@@ -72,13 +147,14 @@ namespace BooksGalore.Areas.Customer.Controllers
 			{
 			
 				cart.price = pricecalc(cart.count, cart.product.price, cart.product.price50,cart.product.price100);
-				obj.total +=( cart.price * cart.count);
+				obj.orderHeader.OrderTotal +=( cart.price * cart.count);
 			}
 
 			return View(obj);
 
 			
 		}
+		//we can have these methods here!!!No Problem
 		private double pricecalc(int count,double p,double p50,double p100)
 		{
 			if(count<50)

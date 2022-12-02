@@ -9,7 +9,7 @@ namespace BooksGalore.ViewModel
 	{
 		public List<ShoppingCart> scart {  get; set; }
 	
-		public double total { get; set; }
+		public OrderHeader orderHeader { get; set; }
 
 	}
 }

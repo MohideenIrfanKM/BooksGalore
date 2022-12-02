@@ -44,5 +44,6 @@ namespace BooksGalore.Db
 //[validatenever] Just for model validation
 //? for DB and model validation. BOTH
 
-//< inside form it will not navigate to any other page until form is submitted but it will do the actions behind"
 //in foreach the  changable datatypes as objects can be changed"
+
+//[bindproperty] automaticallly binds the populated object in the post action method

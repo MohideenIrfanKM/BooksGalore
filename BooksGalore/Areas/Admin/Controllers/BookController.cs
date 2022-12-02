@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BooksGalore.Controllers
 {
     [Area("Admin")]
+    //[bindproperty] automaticallly binds the populated object in the post action method
     public class BookController : Controller
     {
         private readonly IUnitofWork db;

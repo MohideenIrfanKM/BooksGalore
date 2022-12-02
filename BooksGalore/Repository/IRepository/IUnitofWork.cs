@@ -12,7 +12,8 @@ namespace BooksGalore.Repository.IRepository
         ICompanyRepository CompanyRepository { get; }
         IShoppingCartRepository ShoppingCartRepository { get; }
         IApplicationUserRepository ApplicationUserRepository { get; }
-
-        public void Save();
+	    IOrderHeaderRepository OrderHeaderRepository { get; set; }
+	    IOrderDetailsRepository OrderDetailsRepository { get; set; }
+		public void Save();
     }
 }

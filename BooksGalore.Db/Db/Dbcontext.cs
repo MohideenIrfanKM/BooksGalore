@@ -27,6 +27,8 @@ namespace BooksGalore.Db
         public DbSet<Company> Companies { get; set; }   
         public DbSet<ApplicationUser> ApplicationUsers {  get; set; } //add discrimination to NetUsers & Roles added to applicationuser
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        public DbSet<OrderHeader> OrderHeaders { get; set; }
+        public DbSet<OrderDetails> OrderDetails { get; set; }
         //include dbset properties for proper migration if dbcontext seperated from main project
     }
 }

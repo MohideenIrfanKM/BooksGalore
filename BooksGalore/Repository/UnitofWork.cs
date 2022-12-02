@@ -10,7 +10,7 @@ namespace BooksGalore.Repository
         public UnitofWork(Dbcontext db)
         {
             this.db = db;
-            CategoryRepository = new CategoryRepository(db);
+            CategoryRepository = new CategoryRepository(db);//this way we can access repository as DbContext
             CoverTypeRepository = new CoverTypeRepository(db);
             ProductRepository = new ProductRepository(db);
             CompanyRepository = new CompanyRepository(db);

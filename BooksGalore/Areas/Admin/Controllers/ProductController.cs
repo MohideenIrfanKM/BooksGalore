@@ -43,7 +43,7 @@ namespace BooksGalore.Controllers
             ProductVM pdt = new ProductVM()
             {
                 product = new(),
-                categlist = db.CategoryRepository.GetAll().Select(
+                categlist = db.CategoryRepository.GetAll().Select(//projections
             u => new SelectListItem //ORnew SelectlistItem(){}
              {
                 Text = u.Name, //when users select name ID will be retured as value

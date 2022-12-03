@@ -117,7 +117,7 @@ namespace BooksGalore.Areas.Customer.Controllers
 			}
 			if (applicationUser.CompanyId.GetValueOrDefault() == 0)//adding getvalueordefault because if companyid is not even added it will be null
 			{
-				//adding stripe settings
+				//adding stripe settings. These are inbuilt and we are customizing it
 				var domain = "https://localhost:7028/";
 				var options = new SessionCreateOptions
 				{
@@ -149,7 +149,7 @@ namespace BooksGalore.Areas.Customer.Controllers
 				}
 				//session will be created here which was injected in the get view
 				var service = new SessionService();
-				Session session = service.Create(options);
+				Session session = service.Create(options);//after payment all the session details will be populated here
 				//after Session Creation We have to update the session id and payment Id in the Model..in order to confirm order
 				db.OrderHeaderRepository.UpdateStripePaymentId(obj.orderHeader.Id, session.Id, session.PaymentIntentId);
 				db.Save();

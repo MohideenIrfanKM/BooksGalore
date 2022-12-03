@@ -39,7 +39,7 @@ namespace BooksGalore.Repository
             if (includeProperties != null)
                 foreach (var property in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
                 {
-                    query=query.Include(property);
+                    query=query.Include(property);//we can use either string here or lambda exp;
                 }
             return query.FirstOrDefault();
 

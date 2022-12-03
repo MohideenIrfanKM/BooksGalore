@@ -8,7 +8,7 @@
 
 <div class="row">
     <div class="col-md-8">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" class="row" method="post">
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" onsubmit="fun()" class="row" method="post">
             <h2 class="col-12">Create a new account.</h2>
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -140,19 +140,26 @@
 
             })
         });
+        console.log("event");
         function fun() {
                   console.log("executing");
                   if (document.getElementById("Input_Role").value == "Company") {
-                      if (document.getElementById("Input_CompanyId").value == "--SELECT Company--") {
-
-                      
+                      if (document.getElementById("Input_CompanyId").value == "--SELECT Company--")
+                       {
                       swal("Request Failed!!", "Company can't be blank if Role Selected is COMPANY", "error"); //heading, message, key{success,error}
                       return false;
 
-                  }}
-                  else {
-                      return true;
+                       }
+                      else {
+                       
+                           return true;
+                       //heading, message, key{success,error}
+
+                       
+                      }
                   }
+                  
               }
+        //we can't use the above here as onclick=true/false only works on normal button and anchors but for post it won't help
     </script>
 }

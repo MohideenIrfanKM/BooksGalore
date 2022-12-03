@@ -137,7 +137,7 @@ namespace BooksGalore.Areas.Identity.Pages.Account
             
             public string? Role { get; set; }
 
-
+            [Required]
             public int? CompanyId { get; set; }
 
             [Display(Name = " Select Role")]

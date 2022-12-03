@@ -73,13 +73,10 @@ namespace BooksGalore.Areas.Customer.Controllers
 			var x = (ClaimsIdentity)User.Identity;
 			var claim = x.FindFirst(ClaimTypes.NameIdentifier);
 
-
-
 			obj.scart = db.ShoppingCartRepository.GetAll(u => u.ApplicationUserId == claim.Value, includeProperties: "product").ToList();
 
 			obj.orderHeader.OrderDate = DateTime.Now;
-			obj.orderHeader.PaymentStatus = Util.PaymentStatusPending;
-			obj.orderHeader.OrderStatus = Util.StatusPending;
+			
 			obj.orderHeader.ApplicationUserId = claim.Value;
 
 
@@ -89,6 +86,18 @@ namespace BooksGalore.Areas.Customer.Controllers
 
 				cart.price = pricecalc(cart.count, cart.product.price, cart.product.price50, cart.product.price100);
 				obj.orderHeader.OrderTotal += (cart.price * cart.count);
+			}
+			ApplicationUser applicationUser = db.ApplicationUserRepository.getFirstorDefault(u => u.Id == claim.Value);
+			if(applicationUser.CompanyId.GetValueOrDefault()==0)
+			{
+                obj.orderHeader.PaymentStatus = Util.PaymentStatusPending;
+                obj.orderHeader.OrderStatus = Util.StatusPending;
+
+            }
+			else
+			{
+				obj.orderHeader.PaymentStatus = Util.PaymentStatusDelayedPayment;
+				obj.orderHeader.OrderStatus = Util.StatusApproved;
 			}
 			db.OrderHeaderRepository.Add(obj.orderHeader);
 			db.Save();
@@ -106,45 +115,55 @@ namespace BooksGalore.Areas.Customer.Controllers
 				db.OrderDetailsRepository.Add(order);
 				db.Save();
 			}
-			//adding stripe settings
-			var domain = "https://localhost:7028/";
-			var options = new SessionCreateOptions
+			if (applicationUser.CompanyId.GetValueOrDefault() == 0)//adding getvalueordefault because if companyid is not even added it will be null
 			{
-				LineItems = new List<SessionLineItemOptions>(),
-				Mode = "payment",
-				SuccessUrl = domain + $"Customer/Cart/OrderConfirmation?id={obj.orderHeader.Id}",
-				CancelUrl = domain + $"Customer/Cart/Index",
-			};
-			foreach (var item in obj.scart)
-			{
-				var data = new SessionLineItemOptions
+				//adding stripe settings
+				var domain = "https://localhost:7028/";
+				var options = new SessionCreateOptions
 				{
-					// Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-					//Price = item.price.ToString(), only can add price or price data
-					Quantity = item.count,
-					PriceData=new SessionLineItemPriceDataOptions()
-					{
-						UnitAmount=(long)(item.price*100),//don't know why??? DOUBT----solved as it defaulty coverts integer to double(as we already have double point will move btwo step back) convers
-						Currency="usd",
-						ProductData=new SessionLineItemPriceDataProductDataOptions()
-						{
-							Name=item.product.Name,
-						}
-					}
-			
-			
+					LineItems = new List<SessionLineItemOptions>(),
+					Mode = "payment",
+					SuccessUrl = domain + $"Customer/Cart/OrderConfirmation?id={obj.orderHeader.Id}",
+					CancelUrl = domain + $"Customer/Cart/Index",
 				};
-				options.LineItems.Add(data);
-			}
-			//session will be created here which was injected in the get view
-			var service = new SessionService();
-			Session session = service.Create(options);
-			//after Session Creation We have to update the session id and payment Id in the Model..in order to confirm order
-			db.OrderHeaderRepository.UpdateStripePaymentId(obj.orderHeader.Id, session.Id, session.PaymentIntentId);
-			db.Save();
+				foreach (var item in obj.scart)
+				{
+					var data = new SessionLineItemOptions
+					{
+						// Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+						//Price = item.price.ToString(), only can add price or price data
+						Quantity = item.count,
+						PriceData = new SessionLineItemPriceDataOptions()
+						{
+							UnitAmount = (long)(item.price * 100),//don't know why??? DOUBT----solved as it defaulty coverts integer to double(as we already have double point will move btwo step back) convers
+							Currency = "usd",
+							ProductData = new SessionLineItemPriceDataProductDataOptions()
+							{
+								Name = item.product.Name,
+							}
+						}
 
-			Response.Headers.Add("Location", session.Url);
-			return new StatusCodeResult(303);
+
+					};
+					options.LineItems.Add(data);
+				}
+				//session will be created here which was injected in the get view
+				var service = new SessionService();
+				Session session = service.Create(options);
+				//after Session Creation We have to update the session id and payment Id in the Model..in order to confirm order
+				db.OrderHeaderRepository.UpdateStripePaymentId(obj.orderHeader.Id, session.Id, session.PaymentIntentId);
+				db.Save();
+
+
+				Response.Headers.Add("Location", session.Url);
+				return new StatusCodeResult(303);
+			}
+			else
+			{
+
+				return RedirectToAction("OrderConfirmation", "cart", new { id = obj.orderHeader.Id });
+			}
+			
 			//after order is created we can delete the shopping cart
 			//db.ShoppingCartRepository.RemoveRange(obj.scart);
 			//db.Save();
@@ -153,13 +172,17 @@ namespace BooksGalore.Areas.Customer.Controllers
 		//we are using orderconfirmation in order to confirm that the payment is done before approving
 		public IActionResult OrderConfirmation(int id)
 		{
+			
 			OrderHeader orderHeader = db.OrderHeaderRepository.getFirstorDefault(u => u.Id == id);
-			var service = new SessionService();
-			Session session = service.Get(orderHeader.SessionId);
-			if(session.PaymentStatus.ToLower()=="paid")
+			if (orderHeader.PaymentStatus != Util.PaymentStatusDelayedPayment)
 			{
-				db.OrderHeaderRepository.UpdateStatus(id, Util.StatusApproved, Util.PaymentStatusApproved);
-				db.Save();
+				var service = new SessionService();
+				Session session = service.Get(orderHeader.SessionId);
+				if (session.PaymentStatus.ToLower() == "paid")
+				{
+					db.OrderHeaderRepository.UpdateStatus(id, Util.StatusApproved, Util.PaymentStatusApproved);
+					db.Save();
+				}
 			}
 			List<ShoppingCart> shoppingCarts = db.ShoppingCartRepository.GetAll(u=>u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
 			if (shoppingCarts.Count > 0)

@@ -1,6 +1,7 @@
 ﻿using BooksGalore.Db;
 using BooksGalore.Models;
 using BooksGalore.Repository.IRepository;
+using BooksGalore.Utility;
 
 namespace BooksGalore.Repository
 {
@@ -19,15 +20,22 @@ namespace BooksGalore.Repository
 
 		public void UpdateStatus(int id, string OrderStatus, string? PaymentStatus=null)
 		{
-			var obj=db.OrderHeaders.FirstOrDefault(o => o.Id == id);	
-			if(obj != null)
+			var obj=db.OrderHeaders.FirstOrDefault(o => o.Id == id);
+			
+
+            if (obj != null)
 			{
 				obj.OrderStatus = OrderStatus;
 				//db.SaveChanges(); this can be done in controller level using unitofwork
 			}
 			if(PaymentStatus!=null)
 			{
-				obj.PaymentStatus=PaymentStatus; 
+				if(PaymentStatus==Util.PaymentStatusApproved)
+				{
+                    obj.PaymentDate = DateTime.Now;
+
+                }
+                obj.PaymentStatus=PaymentStatus; 
 				//db.SaveChanges();
 			}
 		}
@@ -37,7 +45,8 @@ namespace BooksGalore.Repository
 		   OrderHeader orderHeader = db.OrderHeaders.FirstOrDefault(u=>u.Id == id);
 			if(orderHeader != null)
 			{
-				orderHeader.SessionId=SessionId;
+
+                orderHeader.SessionId=SessionId;
 				orderHeader.PaymentId=PaymentId;
 				
 			}

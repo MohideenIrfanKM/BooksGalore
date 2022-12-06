@@ -9,6 +9,8 @@ namespace BooksGalore.Repository.IRepository
         void Remove(T entity);
 		void RemoveRange(IEnumerable<T> entity);
 
-		T getFirstorDefault(Expression<Func<T, bool>> filter,string? includeProperties=null);
+		T getFirstorDefault(Expression<Func<T, bool>> filter,string? includeProperties=null, bool? tracked=true);
+    //we are using Expression here because it contains the structure of its contents which is must in order to work with sql filtering
     }
+
 }

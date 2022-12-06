@@ -1,6 +1,6 @@
 ﻿
 @using Microsoft.Extensions.Options;
-@inject IOptions<BooksGalore.Utility.Stripe> Stripe;
+@inject IOptions<BooksGalore.Utility.Stripe> Stripe; //@*here we are using stripe class properties which populated using bulder.config in program.cs  dependency injection which makes use of appsettings*@
 @model BooksGalore.ViewModel.ShoppingCartVM;
 <form method="post">
 	<br />
@@ -32,6 +32,8 @@
 								</div>
 								<div class="col-9">
 									<input asp-for="orderHeader.Name" class="form-control" />
+									<span asp-validation-for="orderHeader.Name"></span>
+
 								</div>
 							</div>
 							<div class="row my-1">
@@ -40,6 +42,8 @@
 								</div>
 								<div class="col-9">
 									<input asp-for="orderHeader.PhoneNumber" class="form-control" />
+									<span asp-validation-for="orderHeader.PhoneNumber"></span>
+
 								</div>
 							</div>
 							<div class="row my-1">
@@ -48,6 +52,8 @@
 								</div>
 								<div class="col-9">
 									<input asp-for="orderHeader.StreetAddress" class="form-control" />
+									<span asp-validation-for="orderHeader.StreetAddress"></span>
+
 								</div>
 							</div>
 							<div class="row my-1">
@@ -56,6 +62,8 @@
 								</div>
 								<div class="col-9">
 									<input asp-for="orderHeader.City" class="form-control" />
+									<span asp-validation-for="orderHeader.City"></span>
+
 								</div>
 							</div>
 							<div class="row my-1">
@@ -64,6 +72,8 @@
 								</div>
 								<div class="col-9">
 									<input asp-for="orderHeader.State" class="form-control" />
+									<span asp-validation-for="orderHeader.State"></span>
+
 								</div>
 							</div>
 							<div class="row my-1">
@@ -72,6 +82,8 @@
 								</div>
 								<div class="col-9">
 									<input asp-for="orderHeader.PostalCode" class="form-control" />
+									<span asp-validation-for="orderHeader.PostalCode"></span>
+
 								</div>
 							</div>
 						</div>
@@ -113,3 +125,10 @@
 		</div>
 	</div>
 </form>
+
+
+@section scripts
+{
+	
+	<partial name="_ValidationScriptsPartial.cshtml" />
+}

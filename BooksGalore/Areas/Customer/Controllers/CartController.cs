@@ -109,7 +109,7 @@ namespace BooksGalore.Areas.Customer.Controllers
 					ProductId = cart.ProductId,
 					Count = cart.count,
 					OrderId = obj.orderHeader.Id,
-					Price=obj.orderHeader.OrderTotal
+					Price=cart.price
 
 				};
 				db.OrderDetailsRepository.Add(order);
@@ -162,6 +162,7 @@ namespace BooksGalore.Areas.Customer.Controllers
 			{
 
 				return RedirectToAction("OrderConfirmation", "cart", new { id = obj.orderHeader.Id });
+				//redirect to actio n with actionmethod,controllername and ID
 			}
 			
 			//after order is created we can delete the shopping cart
@@ -180,6 +181,7 @@ namespace BooksGalore.Areas.Customer.Controllers
 				Session session = service.Get(orderHeader.SessionId);
 				if (session.PaymentStatus.ToLower() == "paid")
 				{
+					orderHeader.PaymentDate = DateTime.Now;
 					db.OrderHeaderRepository.UpdateStatus(id, Util.StatusApproved, Util.PaymentStatusApproved);
 					db.Save();
 				}

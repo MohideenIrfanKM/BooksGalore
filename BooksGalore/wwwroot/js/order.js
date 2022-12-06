@@ -45,7 +45,7 @@ function loaddata(status) { //below method complex just for ajax api calls
                     /*if its not rendering please enable js debugging under toold-options-debugging*/
                     return ` 
                             <div class="btn-group">
-                            <a  href="#" class="btn btn-outline-info" >Details</a>`
+                            <a  href="/Admin/Orders/Details?id=${data}" class="btn btn-outline-info" >Details</a>`
                            
 
                 },

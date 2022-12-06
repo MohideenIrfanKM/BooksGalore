@@ -47,3 +47,10 @@ namespace BooksGalore.Db
 //in foreach the  changable datatypes as objects can be changed"
 
 //[bindproperty] automaticallly binds the populated object in the post action method
+
+//IMPORTANT
+//asp-route-id  its just optional, we can even have a action method public IactionResult(without this param),it still works
+
+//readonly post the exact id orvalues to controller but disabled make the value null and post it to controller
+
+//we can use bind property ( [bindproperty] )to use entities as in pages(without passing the objects to view from controllers everytime)

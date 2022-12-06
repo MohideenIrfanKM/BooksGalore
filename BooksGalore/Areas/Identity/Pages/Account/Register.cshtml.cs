@@ -137,7 +137,7 @@ namespace BooksGalore.Areas.Identity.Pages.Account
             
             public string? Role { get; set; }
 
-            [Required]
+           
             public int? CompanyId { get; set; }
 
             [Display(Name = " Select Role")]
@@ -179,7 +179,7 @@ namespace BooksGalore.Areas.Identity.Pages.Account
             };
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)//if any problem add ? in string
+        public async Task<IActionResult> OnPostAsync(string? returnUrl = null)//if any problem add ? in string
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();

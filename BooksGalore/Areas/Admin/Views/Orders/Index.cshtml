@@ -10,7 +10,9 @@
 @{
     ViewData["title"] = "List of Orders";
 }
+
 @{
+    //to get the id from view itself we are doing this
     var status = Context.Request.Query["status"]; //in order to get the value of status from URL' in c#
     var pending = "text-primary";
     var inprocess = "text-primary";

@@ -32,9 +32,16 @@ namespace BooksGalore.Repository
             return query.ToList();
         }
 
-        T IRepository<T>.getFirstorDefault(System.Linq.Expressions.Expression<Func<T, bool>> filter, string? includeProperties=null)
+        T IRepository<T>.getFirstorDefault(System.Linq.Expressions.Expression<Func<T, bool>> filter, string? includeProperties=null,bool? tracked=true)
         {
-            IQueryable<T> query = dbset;
+            IQueryable<T> query;
+            if(tracked==true)
+            {  query = dbset; }
+            else
+            {
+                query = dbset.AsNoTracking();
+            }
+               
             query = query.Where(filter);
             if (includeProperties != null)
                 foreach (var property in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))

@@ -53,4 +53,7 @@ namespace BooksGalore.Db
 
 //readonly post the exact id orvalues to controller but disabled make the value null and post it to controller
 
+//use "return functionname" on onclick attribute inorder to delay or cancel post action untill the function completes
 //we can use bind property ( [bindproperty] )to use entities as in pages(without passing the objects to view from controllers everytime)
+
+//dont't use update backtoback with no edits even made after the first update. it will result in runtime error. snd dont extract same entity two times

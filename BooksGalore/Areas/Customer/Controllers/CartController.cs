@@ -150,7 +150,7 @@ namespace BooksGalore.Areas.Customer.Controllers
 				//session will be created here which was injected in the get view
 				var service = new SessionService();
 				Session session = service.Create(options);//after payment all the session details will be populated here
-				//after Session Creation We have to update the session id and payment Id in the Model..in order to confirm order
+														  //after Session Creation We have to update the session id and payment Id in the Model..in order to confirm order
 				db.OrderHeaderRepository.UpdateStripePaymentId(obj.orderHeader.Id, session.Id, session.PaymentIntentId);
 				db.Save();
 
@@ -177,11 +177,13 @@ namespace BooksGalore.Areas.Customer.Controllers
 			OrderHeader orderHeader = db.OrderHeaderRepository.getFirstorDefault(u => u.Id == id);
 			if (orderHeader.PaymentStatus != Util.PaymentStatusDelayedPayment)
 			{
+			
 				var service = new SessionService();
-				Session session = service.Get(orderHeader.SessionId);
+				Session session = service.Get(orderHeader.SessionId);//here only payment id available
 				if (session.PaymentStatus.ToLower() == "paid")
 				{
 					orderHeader.PaymentDate = DateTime.Now;
+					db.OrderHeaderRepository.UpdateStripePaymentId(id, session.Id, session.PaymentIntentId);
 					db.OrderHeaderRepository.UpdateStatus(id, Util.StatusApproved, Util.PaymentStatusApproved);
 					db.Save();
 				}

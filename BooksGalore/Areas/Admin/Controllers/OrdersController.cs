@@ -54,10 +54,44 @@ namespace BooksGalore.Controllers
             orderHeader.State = obj.OrderHeader.State;
             orderHeader.PostalCode = obj.OrderHeader.PostalCode;
             db.OrderHeaderRepository.Update(orderHeader);
+            TempData["success"] = "Order Details Updated";
+            db.Save();
             return View("Index");
         }
-        #region API-CALLS
-        [HttpGet]
+
+        [Authorize(Roles =Util._Adm+","+Util._Emp)]
+        public IActionResult OrderProcessing(int OrderHeaderId) {
+            OrderHeader obj=db.OrderHeaderRepository.getFirstorDefault(u=>u.Id== OrderHeaderId,tracked:false);
+            db.OrderHeaderRepository.UpdateStatus(OrderHeaderId, Util.StatusInProcess);
+           
+			//db.OrderHeaderRepository.Update(obj);
+
+
+
+			db.Save();
+            TempData["success"] = "Order Status Updated Successfully";//not responding after first request
+            return RedirectToAction("Details","Orders",new { id=OrderHeaderId});
+        }
+		[Authorize(Roles = Util._Adm + "," + Util._Emp)]
+        public IActionResult Shipping(OrderVM order)
+        {
+			OrderHeader obj=db.OrderHeaderRepository.getFirstorDefault(u=>u.Id== order.OrderHeader.Id,tracked:false);
+            obj.ShippingDate = DateTime.Now;
+            obj.Carrier = order.OrderHeader.Carrier;
+            obj.TrackingNumber= order.OrderHeader.TrackingNumber;   
+			db.OrderHeaderRepository.UpdateStatus(order.OrderHeader.Id, Util.StatusShipped);
+           
+
+			db.Save();
+			TempData["success"] = "Order Status Updated Successfully";
+			return RedirectToAction("Details", "Orders", new { id = order.OrderHeader.Id });
+
+
+
+
+		}
+		#region API-CALLS
+		[HttpGet]
         
         public IActionResult GetAll(string status)//we can even have this without(status) parameter, it still accepts
         {

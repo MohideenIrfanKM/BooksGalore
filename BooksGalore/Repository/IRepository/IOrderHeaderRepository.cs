@@ -6,7 +6,7 @@ namespace BooksGalore.Repository.IRepository
 	{
 		public void Update(OrderHeader orderHeader);
 
-		public void UpdateStatus(int id, string OrderStatus, string? PaymentStatus);
+		public void UpdateStatus(int id, string OrderStatus, string? PaymentStatus=null);
 		//as payment can be done after 30d for same users, it may be null
 
 		public void UpdateStripePaymentId(int id, string SessionId, string PaymentId);

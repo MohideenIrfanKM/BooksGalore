@@ -5,7 +5,8 @@
 }
 @using BooksGalore.Utility;
 @model OrderVM
-<form method="post">  @*when there is no post action...there will not be error..IT JUST REFRESHES*@
+<form method="post"  >
+	@*when there is no post action...there will not be error..IT JUST REFRESHES*@
 	<br />
 	<input asp-for="OrderHeader.Id" hidden />
 	<div class="container">
@@ -179,18 +180,25 @@
 									}
 								</div>
 							</div>
+							<div class="row my-1">
+								<div class="col-3">Shipping Date</div>
+								<div class="col-9">
+									<input value="@Model.OrderHeader.ShippingDate.ToShortDateString()" id="shippingDate" type="text" readonly class="form-control" />
+								</div>
+							</div>
 							@if (User.IsInRole(Util._Adm) || User.IsInRole(Util._Emp))
 							{
-								<div class="row my-1">
-									<div class="col-3">Shipping Date</div>
-									<div class="col-9">
-										<input value="@Model.OrderHeader.ShippingDate.ToShortDateString()" id="shippingDate" type="text" readonly class="form-control" />
-									</div>
-								</div>
+						
 								<div class="row my-1">
 									<div class="col-3">Session ID</div>
 									<div class="col-9">
 										<input asp-for="OrderHeader.SessionId" type="text" readonly class="form-control" />
+									</div>
+								</div>
+								<div class="row my-1">
+									<div class="col-3">Payment Intent ID</div>
+									<div class="col-9">
+										<input asp-for="OrderHeader.PaymentId" type="text" readonly class="form-control" />
 									</div>
 								</div>
 							}
@@ -259,25 +267,30 @@
 									</div>
 								</li>
 							</ul>
-							@if (Model.OrderHeader.OrderStatus == Util.StatusApproved)
+							@if(User.IsInRole(Util._Emp)|| User.IsInRole(Util._Adm))
 							{
-								<input type="submit" class="btn btn-primary form-control my-1" value="Start Processing" />
-							}
-							@if(Model.OrderHeader.OrderStatus==Util.StatusInProcess)
-							{
-								<input type="submit" class="btn btn-primary form-control my-1" value="Ship Order" />
+								@if (Model.OrderHeader.OrderStatus == Util.StatusApproved)
+								{
+									<input asp-action="OrderProcessing" asp-route-OrderHeaderId="@Model.OrderHeader.Id" type="submit" class="btn btn-primary form-control my-1" value="Start Processing" />
+								}
+								@if (Model.OrderHeader.OrderStatus == Util.StatusInProcess)
+								{
+									<input asp-action="Shipping" onclick="return fun()"  type="submit" class="btn btn-primary form-control my-1" value="Ship Order" />
+								
+								}
+								@if (Model.OrderHeader.OrderStatus != Util.StatusRefunded || Model.OrderHeader.OrderStatus != Util.StatusCancelled)
+								{
+									<input type="submit" class="btn btn-danger form-control my-1" value="Cancel Order" />
 
+								}
 							}
+
 							@if(Model.OrderHeader.OrderStatus==Util.StatusShipped && Model.OrderHeader.PaymentStatus == Util.PaymentStatusDelayedPayment)
 							{
 								<input type="submit" class="btn btn-success form-control my-1" value="Pay Now" />
 
 							}
-							@if(Model.OrderHeader.OrderStatus!=Util.StatusRefunded || Model.OrderHeader.OrderStatus!=Util.StatusCancelled)
-							{
-								<input type="submit" class="btn btn-danger form-control my-1" value="Cancel Order" />
-
-							}
+							
 						</div>
 					</div>
 				</div>
@@ -286,3 +299,24 @@
 	</div>
 </form>
 
+@section myown
+{
+	<partial name="_toastr.cshtml" />
+	<script>
+		function fun() {
+		
+			if (document.getElementById("trackingnumber").value == "" || document.getElementById("carrier").value == "")
+			{
+				swal("Request Failed!!", "Tracking Number & Carrier Name can't be blank'", "error"); //heading, message, key{success,error}
+				return false;
+
+			}
+			else
+			{
+				return true;
+			}
+		}
+		
+	</script>
+
+}

@@ -8,6 +8,8 @@ using BooksGalore.Utility;
 using BooksGalore.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
+using Stripe.Checkout;
 
 namespace BooksGalore.Controllers
 {
@@ -73,13 +75,22 @@ namespace BooksGalore.Controllers
             return RedirectToAction("Details","Orders",new { id=OrderHeaderId});
         }
 		[Authorize(Roles = Util._Adm + "," + Util._Emp)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Shipping(OrderVM order)
         {
 			OrderHeader obj=db.OrderHeaderRepository.getFirstorDefault(u=>u.Id== order.OrderHeader.Id,tracked:false);
             obj.ShippingDate = DateTime.Now;
+            //obj.PaymentDueDate = DateTime.Now.AddDays(28);
             obj.Carrier = order.OrderHeader.Carrier;
-            obj.TrackingNumber= order.OrderHeader.TrackingNumber;   
-			db.OrderHeaderRepository.UpdateStatus(order.OrderHeader.Id, Util.StatusShipped);
+            obj.TrackingNumber= order.OrderHeader.TrackingNumber;
+            if (obj.PaymentStatus == Util.PaymentStatusDelayedPayment)
+            {
+                obj.PaymentDueDate = DateTime.Now.AddDays(30);
+                db.OrderHeaderRepository.Update(obj);
+            }
+            db.OrderHeaderRepository.UpdateStatus(order.OrderHeader.Id, Util.StatusShipped);
+
            
 
 			db.Save();
@@ -90,6 +101,116 @@ namespace BooksGalore.Controllers
 
 
 		}
+		[Authorize(Roles = Util._Adm + "," + Util._Emp)] //inorder to authorize only selected roles
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public IActionResult CancelOrder(OrderVM obj)
+        {
+			if(obj.OrderHeader.PaymentStatus==Util.PaymentStatusApproved)
+            {
+                var options = new RefundCreateOptions
+                {
+                    Reason = RefundReasons.RequestedByCustomer,
+                    PaymentIntent = obj.OrderHeader.PaymentId,
+                    //Amount is default paid amount. if you want to be explicit then you can populate the value for Amount
+                };
+                var service = new RefundService();
+                Refund refund = service.Create(options);
+
+				db.OrderHeaderRepository.UpdateStatus(obj.OrderHeader.Id, Util.StatusRefunded);
+                TempData["success"] = "Order Cancelled!";
+
+
+            }
+            else
+            {
+				db.OrderHeaderRepository.UpdateStatus(obj.OrderHeader.Id, Util.StatusCancelled);
+                TempData["success"] = "Order Cancelled! & PaymentRefunded";
+
+
+            }
+            db.Save();
+            
+			return RedirectToAction("Details","Orders",new { id= obj.OrderHeader.Id }); 
+        }
+
+        [HttpGet]
+        public IActionResult PaymentConfirmation(int? id)
+        {
+            OrderHeader orderHeader = db.OrderHeaderRepository.getFirstorDefault(u => u.Id == id);
+            if (orderHeader.PaymentStatus == Util.PaymentStatusDelayedPayment)
+            {
+
+                var service = new SessionService();
+                Session session = service.Get(orderHeader.SessionId);//here only payment id available
+                if (session.PaymentStatus.ToLower() == "paid")
+                {
+                    orderHeader.PaymentDate = DateTime.Now;
+                    db.OrderHeaderRepository.UpdateStripePaymentId(orderHeader.Id, session.Id, session.PaymentIntentId);
+                    db.OrderHeaderRepository.UpdateStatus(orderHeader.Id, Util.StatusShipped, Util.PaymentStatusApproved);
+                    db.Save();
+                }
+            }
+            return View(id);
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult PayNow(int OrderHeaderId) 
+        {
+
+            OrderVM obj = new()
+            {
+                OrderHeader=db.OrderHeaderRepository.getFirstorDefault(u=>u.Id==OrderHeaderId,tracked:false),
+                OrderDetails=db.OrderDetailsRepository.GetAll(u=>u.OrderId==OrderHeaderId,includeProperties:"product"),
+            };
+                var domain = "https://localhost:7028/";
+                var options = new SessionCreateOptions
+                {
+                    LineItems = new List<SessionLineItemOptions>(),
+                    Mode = "payment",
+                    SuccessUrl = domain + $"Admin/Orders/PaymentConfirmation?id={obj.OrderHeader.Id}",
+                    CancelUrl = domain + $"Admin/Orders/Details?id={obj.OrderHeader.Id}",
+                };
+                foreach (var item in obj.OrderDetails)
+                {
+                    var data = new SessionLineItemOptions
+                    {
+                        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+                        //Price = item.price.ToString(), only can add price or price data
+                        Quantity = item.Count,
+                        PriceData = new SessionLineItemPriceDataOptions()
+                        {
+                            UnitAmount = (long)(item.Price * 100),//don't know why??? DOUBT----solved as it defaulty coverts integer to double(as we already have double point will move btwo step back) convers
+                            Currency = "usd",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions()
+                            {
+                                Name = item.product.Name,
+                            }
+                        }
+
+
+                    };
+                    options.LineItems.Add(data);
+                }
+                //session will be created here which was injected in the get view
+                var service = new SessionService();
+                Session session = service.Create(options);//after payment all the session details will be populated here
+                                                          //after Session Creation We have to update the session id and payment Id in the Model..in order to confirm order
+                db.OrderHeaderRepository.UpdateStripePaymentId(obj.OrderHeader.Id, session.Id, session.PaymentIntentId);
+                db.Save();
+
+
+                Response.Headers.Add("Location", session.Url);
+                return new StatusCodeResult(303);
+            
+            
+
+			//return RedirectToAction("PaymentConfirmation","Orders",new {id=obj.OrderHeader.Id });   
+        }
+
+
 		#region API-CALLS
 		[HttpGet]
         

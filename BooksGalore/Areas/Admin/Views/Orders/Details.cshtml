@@ -278,16 +278,16 @@
 									<input asp-action="Shipping" onclick="return fun()"  type="submit" class="btn btn-primary form-control my-1" value="Ship Order" />
 								
 								}
-								@if (Model.OrderHeader.OrderStatus != Util.StatusRefunded || Model.OrderHeader.OrderStatus != Util.StatusCancelled)
+								@if (Model.OrderHeader.OrderStatus != Util.StatusRefunded && Model.OrderHeader.OrderStatus != Util.StatusCancelled && Model.OrderHeader.OrderStatus != Util.StatusShipped)
 								{
-									<input type="submit" class="btn btn-danger form-control my-1" value="Cancel Order" />
+									<input asp-action="CancelOrder" type="submit" class="btn btn-danger form-control my-1" value="Cancel Order" />
 
 								}
 							}
 
-							@if(Model.OrderHeader.OrderStatus==Util.StatusShipped && Model.OrderHeader.PaymentStatus == Util.PaymentStatusDelayedPayment)
+							@if(Model.OrderHeader.OrderStatus==Util.StatusShipped && Model.OrderHeader.PaymentStatus == Util.PaymentStatusDelayedPayment )
 							{
-								<input type="submit" class="btn btn-success form-control my-1" value="Pay Now" />
+								<input type="submit" asp-action="PayNow" asp-route-OrderHeaderId="@Model.OrderHeader.Id" class="btn btn-success form-control my-1" value="Pay Now" />
 
 							}
 							

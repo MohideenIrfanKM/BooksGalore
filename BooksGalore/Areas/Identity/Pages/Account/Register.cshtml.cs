@@ -34,7 +34,7 @@ namespace BooksGalore.Areas.Identity.Pages.Account
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
+        private readonly IEmailSender _emailSender; //create dummy emailsender in first place utility class
         private readonly RoleManager<IdentityRole> _roleManager;
         public readonly IUnitofWork _db;
 

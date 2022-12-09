@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.Encodings.Web;
 using System.Xml.Schema;
 using BooksGalore.Models;
 using BooksGalore.Repository;
@@ -7,6 +8,7 @@ using BooksGalore.Repository.IRepository;
 using BooksGalore.Utility;
 using BooksGalore.ViewModel;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -19,10 +21,12 @@ namespace BooksGalore.Areas.Customer.Controllers
 	public class CartController : Controller
 	{
 		private readonly IUnitofWork db;
+		public readonly IEmailSender _emailSender;
 
-		public CartController(IUnitofWork db)
+		public CartController(IUnitofWork db,IEmailSender _emailSender)
 		{
 			this.db = db;
+			this._emailSender = _emailSender;
 		}
 		public IActionResult IncCount(int scid)
 		{
@@ -174,7 +178,15 @@ namespace BooksGalore.Areas.Customer.Controllers
 		public IActionResult OrderConfirmation(int id)
 		{
 			
-			OrderHeader orderHeader = db.OrderHeaderRepository.getFirstorDefault(u => u.Id == id);
+			OrderHeader orderHeader = db.OrderHeaderRepository.getFirstorDefault(u => u.Id == id,includeProperties:"ApplicationUser");
+			IEnumerable<OrderDetails> orderDetails = db.OrderDetailsRepository.GetAll(u => u.OrderId == orderHeader.Id, includeProperties: "product");
+			string items = "";
+			foreach(var i in orderDetails)
+			{
+				items= items + i.product.Name.ToString()+" - Count("+i.Count.ToString()+")";
+			}
+			items=items.Replace(")",")"+System.Environment.NewLine);//to include new line in string
+			
 			if (orderHeader.PaymentStatus != Util.PaymentStatusDelayedPayment)
 			{
 			
@@ -188,7 +200,9 @@ namespace BooksGalore.Areas.Customer.Controllers
 					db.Save();
 				}
 			}
-			List<ShoppingCart> shoppingCarts = db.ShoppingCartRepository.GetAll(u=>u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+			
+			_emailSender.SendEmailAsync(orderHeader.ApplicationUser.Email, "Order PLACED!!!", $"<p>Your Order for the items of worth ${orderHeader.OrderTotal} gets <b>APPROVED</b></p><p>Your Order Items are :</p>{items}<p>Your Order Reference Id is {id}.<p><b>Thank You for Ordering</b><p>.");
+            List<ShoppingCart> shoppingCarts = db.ShoppingCartRepository.GetAll(u=>u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
 			if (shoppingCarts.Count > 0)
 			{
 				db.ShoppingCartRepository.RemoveRange(shoppingCarts);

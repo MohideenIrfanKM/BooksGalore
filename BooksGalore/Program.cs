@@ -16,7 +16,7 @@ builder.Services.AddDbContext<Dbcontext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("Connect")/*,b=>b.MigrationsAssembly("BooksGalore.Models")*/));
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(/*options => options.SignIn.RequireConfirmedAccount = true*/).AddDefaultTokenProviders()
     .AddEntityFrameworkStores<Dbcontext>();
-builder.Services.AddSingleton<IEmailSender, EmailSender>();
+builder.Services.AddSingleton<IEmailSender, EmailSender>(); //dummy email sender in first place as we override Default identity inorder to include roles, default email sender will not be available
 builder.Services.AddScoped<IUnitofWork, UnitofWork>();
 builder.Services.Configure<BooksGalore.Utility.Stripe>(builder.Configuration.GetSection("Stripe"));
 builder.Services.ConfigureApplicationCookie(option =>

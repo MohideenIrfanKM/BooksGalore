@@ -24,7 +24,8 @@ namespace BooksGalore.Db
         public DbSet<Category> Categories { get; set; }
         public DbSet<CoverType> CoverTypes { get; set; }
         public DbSet<Product> Products { get; set; }  
-        public DbSet<Company> Companies { get; set; }   
+        public DbSet<Company> Companies { get; set; } 
+        //before adding ApplicationUser We will be using Default <IdentityUser> in below line.
         public DbSet<ApplicationUser> ApplicationUsers {  get; set; } //add discrimination to NetUsers & Roles added to applicationuser
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public DbSet<OrderHeader> OrderHeaders { get; set; }
@@ -37,6 +38,8 @@ namespace BooksGalore.Db
 //efcore for accessing Dbcontext
 //sqlserver for accessing sqlserver
 //Identity for accessing Registration $ Login
+//stripe for payments
+//mailkit and mimekit for emailsender
 
 //For .net version 7 sqlserver checkingsomecertificates so we have to set it to false otherwise 
 //some error will come. Google it to overcome it

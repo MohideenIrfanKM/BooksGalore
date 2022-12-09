@@ -3,13 +3,16 @@ using BooksGalore.Db;
 using BooksGalore.Models;
 using BooksGalore.Repository;
 using BooksGalore.Repository.IRepository;
+using BooksGalore.Utility;
 using BooksGalore.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BooksGalore.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = Util._Adm)]
 
     public class ProductController : Controller
     {

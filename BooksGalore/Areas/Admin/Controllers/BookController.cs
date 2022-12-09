@@ -2,11 +2,14 @@
 using BooksGalore.Models;
 using BooksGalore.Repository;
 using BooksGalore.Repository.IRepository;
+using BooksGalore.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BooksGalore.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles =Util._Adm)]
     //[bindproperty] automaticallly binds the populated object in the post action method
     public class BookController : Controller
     {

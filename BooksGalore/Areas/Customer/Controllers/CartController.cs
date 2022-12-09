@@ -212,23 +212,31 @@ namespace BooksGalore.Areas.Customer.Controllers
 		}
 		public IActionResult DecCount(int scid)
 		{
+            var x = (ClaimsIdentity)User.Identity;
+            var claim = x.FindFirst(ClaimTypes.NameIdentifier);
 
-			ShoppingCart obj = db.ShoppingCartRepository.getFirstorDefault(u => u.Id == scid);
+            ShoppingCart obj = db.ShoppingCartRepository.getFirstorDefault(u => u.Id == scid);
 			db.ShoppingCartRepository.DecCount(obj, 1);
 			if(obj.count<1)
 			{
 				db.ShoppingCartRepository.Remove(obj);
-			}
-			db.Save();
-			return RedirectToAction(nameof(Index));
+
+            }
+            db.Save();
+            HttpContext.Session.SetInt32(Util.SessionCart, db.ShoppingCartRepository.GetAll(u => u.ApplicationUserId == claim.Value).ToList().Count);
+
+            return RedirectToAction(nameof(Index));
 
 
 		}
 		public IActionResult Remove(int scid)
 		{
+			var x = (ClaimsIdentity)User.Identity;
+			var claim = x.FindFirst(ClaimTypes.NameIdentifier);
 			ShoppingCart obj = db.ShoppingCartRepository.getFirstorDefault(u => u.Id == scid);
 			db.ShoppingCartRepository.Remove(obj);
 			db.Save();
+			HttpContext.Session.SetInt32(Util.SessionCart, db.ShoppingCartRepository.GetAll(u => u.ApplicationUserId == claim.Value).ToList().Count);
 			return RedirectToAction(nameof(Index));
 
 

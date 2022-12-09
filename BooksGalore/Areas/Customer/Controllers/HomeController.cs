@@ -4,6 +4,7 @@ using BooksGalore.Db;
 using BooksGalore.Models;
 using BooksGalore.Repository;
 using BooksGalore.Repository.IRepository;
+using BooksGalore.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -61,6 +62,7 @@ namespace BooksGalore.Controllers
             {
 				db.ShoppingCartRepository.Add(obj);
                 db.Save();
+                HttpContext.Session.SetInt32(Util.SessionCart, db.ShoppingCartRepository.GetAll(u => u.ApplicationUserId == claim.Value).ToList().Count);
 
 			}
             return RedirectToAction(nameof(Index));

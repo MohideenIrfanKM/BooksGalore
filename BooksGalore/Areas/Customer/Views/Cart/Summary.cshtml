@@ -1,6 +1,7 @@
 ﻿
 @using Microsoft.Extensions.Options;
 @inject IOptions<BooksGalore.Utility.Stripe> Stripe; //@*here we are using stripe class properties which populated using bulder.config in program.cs  dependency injection which makes use of appsettings*@
+@*i think this abov will be passed to controller*@
 @model BooksGalore.ViewModel.ShoppingCartVM;
 <form method="post">
 	<br />

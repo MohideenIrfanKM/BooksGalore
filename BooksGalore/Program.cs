@@ -26,6 +26,13 @@ builder.Services.ConfigureApplicationCookie(option =>
     option.LogoutPath = $"/Identity/Account/Logout";
 
 });
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(100);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
@@ -38,16 +45,17 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles();//this is for using css,bootrsap etc which are static files
 
 app.UseRouting();
+//stripe configuration
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();//for this we have to use get not tostring
 app.UseAuthentication();
 
 
 app.UseAuthorization();
 app.MapRazorPages();
-
+app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");

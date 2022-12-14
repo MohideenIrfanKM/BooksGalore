@@ -1,7 +1,7 @@
 # BooksGalore
 BooksGalore is a E-Commerce Web Application created by using DotNet Framework(.net 6)
 
-About:
+ABOUT:
 
 This Web Application is created with MVC(Models-Views-Controllers) architecture and on the top of that, this projects also implements REPOSITORY PATTERN with the help of 
 DEPENDENCY INJECTION container which seperates all the data accessible codes with other codes and reduce the code redundancy which also makes this project clean. The user
@@ -10,7 +10,7 @@ Migrations.Email features are added with SMTP protocol.
 
 Welcome to BooksGalore, a web application for online book ordering and processing.
 
-Features:
+FEATURES:
 
 Email verification and notification upon login or order placement,
 Payment processing through Stripe checkout,
@@ -21,14 +21,14 @@ Easy-to-use interface for Managing different orders.
 
 
 
-Requirements:
+REQUIREMENTS:
 
 .NET 6 framework,
 
 MSSQL database
 
 
-Important Nuget Packages:
+IMPORTANT NUGET PACKAGES:
 
 Microsoft.EntityFrameworkCore
 
@@ -43,7 +43,7 @@ Stripe.net
 MimeKit and MailKit
 
 
-Installation:
+INSTALLATION:
 
 
 Clone the repository to your local machine
@@ -54,7 +54,7 @@ Update the database connection string in the appsettings.json file
 
 Build and run the project
 
-Usage:
+USAGE:
 
 Register for an account as an Individual, Company, Admin, or Employee.
 Log in to the application.

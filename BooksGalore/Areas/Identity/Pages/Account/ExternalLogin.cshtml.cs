@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using BooksGalore.Models;
 
 namespace BooksGalore.Areas.Identity.Pages.Account
 {
@@ -84,6 +85,29 @@ namespace BooksGalore.Areas.Identity.Pages.Account
             [Required]
             [EmailAddress]
             public string Email { get; set; }
+
+            [Required]
+            [Display(Name = "Name")]
+            public string Name { get; set; }
+
+
+
+            [Display(Name = "Street Address")]
+            public string? StreetAddress { get; set; }
+
+            [Display(Name = "City")]
+            public string? City { get; set; }
+
+            [Display(Name = "State")]
+            public string? State { get; set; }
+
+
+            [Display(Name = "Postal Code")]
+            public string? PostalCode { get; set; }
+
+            [Phone]
+            [Display(Name = "Phone ")]
+            public string? PhoneNumber { get; set; }
         }
         
         public IActionResult OnGet() => RedirectToPage("./Login");
@@ -131,7 +155,8 @@ namespace BooksGalore.Areas.Identity.Pages.Account
                 {
                     Input = new InputModel
                     {
-                        Email = info.Principal.FindFirstValue(ClaimTypes.Email)
+                        Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+                        Name = info.Principal.FindFirstValue(ClaimTypes.Name),//added this to get the name from Social Logins
                     };
                 }
                 return Page();
@@ -155,13 +180,21 @@ namespace BooksGalore.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-
+                user.State = Input.State;
+                user.PhoneNumber = Input.PhoneNumber;
+                user.City = Input.City;
+                user.Name = Input.Name;
+                user.StreetAddress = Input.StreetAddress;
+                user.PostalCode = Input.PostalCode;
+               
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
+
+                        await _userManager.AddToRoleAsync(user, Utility.Util._ind);//adding to role
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
 
                         var userId = await _userManager.GetUserIdAsync(user);
@@ -197,11 +230,11 @@ namespace BooksGalore.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private IdentityUser CreateUser()
+        private ApplicationUser CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<IdentityUser>();
+                return Activator.CreateInstance<ApplicationUser>();
             }
             catch
             {

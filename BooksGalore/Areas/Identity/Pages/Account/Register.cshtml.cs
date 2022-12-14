@@ -206,9 +206,9 @@ namespace BooksGalore.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    
+
                     _logger.LogInformation("User created a new account with password.");
-          
+
                     if (Input.Role != null)
                     {
                         await _userManager.AddToRoleAsync(user, Input.Role); //it is related with user so usermanager used
@@ -235,9 +235,17 @@ namespace BooksGalore.Areas.Identity.Pages.Account
                     }
                     else
                     {
+                        if (User.IsInRole(Util._Adm))
+                        {
+                            return LocalRedirect(returnUrl);
+
+                        }
+                        else 
+                        { 
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
-                    }
+                         }
+                }
                 }
                 foreach (var error in result.Errors)
                 {

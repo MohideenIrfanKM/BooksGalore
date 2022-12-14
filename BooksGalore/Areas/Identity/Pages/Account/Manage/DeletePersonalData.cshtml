@@ -4,8 +4,17 @@
     ViewData["Title"] = "Delete Personal Data";
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
+@{
+    Layout = "/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
+
+}
 
 <h3>@ViewData["Title"]</h3>
+
+@if (User.IsInRole(BooksGalore.Utility.Util._Adm))
+{
+    //we can add the below code here if we want to close an account only by admin.
+}
 
 <div class="alert alert-warning" role="alert">
     <p>

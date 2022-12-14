@@ -208,7 +208,10 @@ namespace BooksGalore.Areas.Customer.Controllers
 				db.ShoppingCartRepository.RemoveRange(shoppingCarts);
 				db.Save();
 			}
-			return View(id);
+			//HttpContext.Session.SetInt32(Util.SessionCart, db.ShoppingCartRepository.GetAll(u => u.ApplicationUserId == claim.Value).ToList().Count);
+			//or we can use clear
+			HttpContext.Session.Clear();
+            return View(id);
 		}
 		public IActionResult DecCount(int scid)
 		{

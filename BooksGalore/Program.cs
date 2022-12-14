@@ -17,14 +17,32 @@ builder.Services.AddDbContext<Dbcontext>(options => options.UseSqlServer(
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(/*options => options.SignIn.RequireConfirmedAccount = true*/).AddDefaultTokenProviders()
     .AddEntityFrameworkStores<Dbcontext>();
 builder.Services.AddSingleton<IEmailSender, EmailSender>(); //dummy email sender in first place as we override Default identity inorder to include roles, default email sender will not be available
+builder.Services.AddScoped<IDbInitializer,DbInitializer>();
 builder.Services.AddScoped<IUnitofWork, UnitofWork>();
-builder.Services.Configure<BooksGalore.Utility.Stripe>(builder.Configuration.GetSection("Stripe"));
+builder.Services.Configure<BooksGalore.Utility.Stripe>(builder.Configuration.GetSection("Stripe"));//getting connection from appsettings
 builder.Services.ConfigureApplicationCookie(option =>
 {
     option.AccessDeniedPath = $"/Identity/Account/AccessDenied";
     option.LoginPath = $"/Identity/Account/Login";
     option.LogoutPath = $"/Identity/Account/Logout";
 
+});
+builder.Services.AddAuthentication().AddFacebook(options =>
+{
+    options.AppId = "1286809618839890";
+    options.AppSecret = "1d4ef69a8850a35b2817ec0dc5782f15";
+    //retrieved from developers.facebook.com
+});
+//builder.Services.AddAuthentication().AddTwitter(options =>
+//{
+//    options.ConsumerKey = "NkpDMkRadFFPdGNLTER5dWY1QnA6MTpjaQ";
+//    options.ConsumerSecret = "RyL6da-bBVJOCcaTc1dFhZDXut_N2ShO1ZjzcjrTgQsYlRSf6y";
+//});
+
+builder.Services.AddAuthentication().AddGoogle(options =>
+{
+    options.ClientId = "714170082848-fbapgp0bh3hfm60g77dtmkqafhvabshb.apps.googleusercontent.com";
+    options.ClientSecret = "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";
 });
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -50,10 +68,14 @@ app.UseStaticFiles();//this is for using css,bootrsap etc which are static files
 app.UseRouting();
 //stripe configuration
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();//for this we have to use get not tostring
+execute();//to execute the seed database process
+
+
 app.UseAuthentication();
 
 
 app.UseAuthorization();
+
 app.MapRazorPages();
 app.UseSession();
 app.MapControllerRoute(
@@ -61,3 +83,14 @@ app.MapControllerRoute(
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+void execute()
+{
+    using(var scope = app.Services.CreateScope())
+    {
+        var dbi=scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        dbi.Initialize();
+
+        //to get the builder services here itself...
+    }
+}

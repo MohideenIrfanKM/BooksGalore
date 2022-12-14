@@ -228,7 +228,12 @@
 									<input type="text" asp-for="OrderHeader.PaymentStatus" readonly class="form-control" />
 								</div>
 							</div>
-							<input type="submit" asp-action="UpdateOrder" class="btn btn-warning form-control my-1" value="Update Order Details" />
+							@if (User.IsInRole(BooksGalore.Utility.Util._Adm) || (User.IsInRole(BooksGalore.Utility.Util._Emp)))
+							{
+								<input type="submit" asp-action="UpdateOrder" class="btn btn-warning form-control my-1" value="Update Order Details" />
+
+								
+							}
 
 
 						</div>
@@ -290,7 +295,12 @@
 								<input type="submit" asp-action="PayNow" asp-route-OrderHeaderId="@Model.OrderHeader.Id" class="btn btn-success form-control my-1" value="Pay Now" />
 
 							}
-							
+							@if (Model.OrderHeader.PaymentStatus == Util.PaymentStatusApproved)
+							{
+								<label style="background-color:mediumseagreen;border-color:black" class="form-control my-2 text-center">Already Paid - <b>$@Model.OrderHeader.OrderTotal.ToString("0.00")</b></label>
+
+							}
+
 						</div>
 					</div>
 				</div>

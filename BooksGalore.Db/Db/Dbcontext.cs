@@ -20,6 +20,7 @@ namespace BooksGalore.Db
        // Customize the ASP.NET Identity model and override the defaults if needed.
         // For example, you can rename the ASP.NET Identity table names and more.
         // Add your customizations after calling base.OnModelCreating(builder);
+        //IMPPRTANT here you cann add or define the composite PRIMARY key for a table 
     }
         public DbSet<Category> Categories { get; set; }
         public DbSet<CoverType> CoverTypes { get; set; }
@@ -58,5 +59,18 @@ namespace BooksGalore.Db
 
 //use "return functionname" on onclick attribute inorder to delay or cancel post action untill the function completes
 //we can use bind property ( [bindproperty] )to use entities as in pages(without passing the objects to view from controllers everytime)
+
+//sessions are key value pairs//viewcomponent is another way to use data inside views but without any tag helpers
+
+
+
+//IMPORTANT LAYOUT is the main page which gets executed in a view
+
+
+//read the microsoft documentation to provide authentication support . iT's not tough!
+
+//htt://stackoverflow.com/questions/17676974/changing-objects-value-in-foreach-loop
+//FOREACH IENUMERABLE DIFFERENT LOOP //WE CAN ONLY CHANCE OBJECT MEMBERS BUT WE CAN"T CHANGE OR INITIALIZE OTHER TYPES
+
 
 //dont't use update backtoback with no edits even made after the first update. it will result in runtime error. snd dont extract same entity two times

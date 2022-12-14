@@ -4,7 +4,10 @@
     ViewData["Title"] = "Manage Email";
     ViewData["ActivePage"] = ManageNavPages.Email;
 }
+@{
+    Layout = "/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
 
+}
 <h3>@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="StatusMessage" />
 <div class="row">

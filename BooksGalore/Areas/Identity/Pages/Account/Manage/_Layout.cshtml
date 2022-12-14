@@ -1,22 +1,28 @@
 ﻿@{
+    ViewData["ParentLayout"] = "~/Views/Shared/_Layout.cshtml";
     if (ViewData.TryGetValue("ParentLayout", out var parentLayout))
     {
         Layout = (string)parentLayout;
     }
     else
     {
-        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+        Layout = "/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
     }
-}
 
+    ////Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+
+    /////we are making sub layout first and then passing this to main layout
+
+}
 <h1>Manage your account</h1>
 
 <div>
     <h2>Change your account settings</h2>
     <hr />
     <div class="row">
+        
         <div class="col-md-3">
-            <partial name="_ManageNav" />
+            <partial name="~/Areas/Identity/Pages/Account/Manage/_ManageNav.cshtml" />
         </div>
         <div class="col-md-9">
             @RenderBody()

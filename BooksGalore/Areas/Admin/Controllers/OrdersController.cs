@@ -224,11 +224,13 @@ namespace BooksGalore.Controllers
             //we can use user object to get the roles and we can have rolemanager obj to add the roles
             if (User.IsInRole(Util._Emp)|| User.IsInRole(Util._Adm))
             {
-                orderHeaders = db.OrderHeaderRepository.GetAll(includeProperties: "ApplicationUser");//GetAll("includeProperties:Category,Covertype")
-            }
+                orderHeaders = db.OrderHeaderRepository.GetAll(includeProperties: "ApplicationUser").ToList();//GetAll("includeProperties:Category,Covertype")
+                orderHeaders = orderHeaders.OrderByDescending(u => u.Id);// working but not eworking inside view
+
+			}
             else
             {
-                orderHeaders = db.OrderHeaderRepository.GetAll(u => u.ApplicationUserId == claim.Value,includeProperties:"ApplicationUser");
+                orderHeaders = db.OrderHeaderRepository.GetAll(u => u.ApplicationUserId == claim.Value,includeProperties:"ApplicationUser").OrderByDescending(u => u.Id);
             }
             //orderHeaders =db.OrderHeaderRepository.GetAll(includeProperties: "ApplicationUser");//GetAll("includeProperties:Category,Covertype")
             switch (status)

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Stripe;
 
 namespace BooksGalore.Areas.Identity.Pages.Account.Manage
 {
@@ -80,7 +81,7 @@ namespace BooksGalore.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
+            //ViewData["Layout"] = "~/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
             await LoadAsync(user);
             return Page();
         }

@@ -29,20 +29,20 @@ builder.Services.ConfigureApplicationCookie(option =>
 });
 builder.Services.AddAuthentication().AddFacebook(options =>
 {
-    options.AppId = "1286809618839890";
-    options.AppSecret = "1d4ef69a8850a35b2817ec0dc5782f15";
+    options.AppId = "";
+    options.AppSecret = "";
     //retrieved from developers.facebook.com
 });
 //builder.Services.AddAuthentication().AddTwitter(options =>
 //{
-//    options.ConsumerKey = "NkpDMkRadFFPdGNLTER5dWY1QnA6MTpjaQ";
-//    options.ConsumerSecret = "RyL6da-bBVJOCcaTc1dFhZDXut_N2ShO1ZjzcjrTgQsYlRSf6y";
+//    options.ConsumerKey = "";
+//    options.ConsumerSecret = "";
 //});
 
 builder.Services.AddAuthentication().AddGoogle(options =>
 {
-    options.ClientId = "714170082848-fbapgp0bh3hfm60g77dtmkqafhvabshb.apps.googleusercontent.com";
-    options.ClientSecret = "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";
+    options.ClientId = "";
+    options.ClientSecret = "";
 });
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
